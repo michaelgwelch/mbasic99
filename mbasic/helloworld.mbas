@@ -1,0 +1,11 @@
+50 REM Test End Statements
+
+100 INPUT I
+110 IF I <> 0 Then 130 Else 150
+120 END
+130 INPUT I
+140 IF I <> 0 Then 160
+150 STOP
+160 PRINT "You made it"
+
+2100 INPUT I$

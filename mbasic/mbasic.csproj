@@ -1,0 +1,91 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{3CA4DBDE-9A36-4275-AF39-A6EEFFB5589D}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>mbasic</RootNamespace>
+    <AssemblyName>mbasic</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Lexer.cs" />
+    <Compile Include="Parser.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SymbolTable.cs" />
+    <Compile Include="SyntaxTree\Add.cs" />
+    <Compile Include="SyntaxTree\Assign.cs" />
+    <Compile Include="SyntaxTree\BasicType.cs" />
+    <Compile Include="SyntaxTree\Block.cs" />
+    <Compile Include="SyntaxTree\Concatenate.cs" />
+    <Compile Include="SyntaxTree\Division.cs" />
+    <Compile Include="SyntaxTree\End.cs" />
+    <Compile Include="SyntaxTree\Equals.cs" />
+    <Compile Include="SyntaxTree\Expression.cs" />
+    <Compile Include="SyntaxTree\For.cs" />
+    <Compile Include="SyntaxTree\Function.cs" />
+    <Compile Include="SyntaxTree\Goto.cs" />
+    <Compile Include="SyntaxTree\If.cs" />
+    <Compile Include="SyntaxTree\Increment.cs" />
+    <Compile Include="SyntaxTree\Input.cs" />
+    <Compile Include="SyntaxTree\LessThan.cs" />
+    <Compile Include="SyntaxTree\Multiply.cs" />
+    <Compile Include="SyntaxTree\Negative.cs" />
+    <Compile Include="SyntaxTree\Not.cs" />
+    <Compile Include="SyntaxTree\NumberLiteral.cs" />
+    <Compile Include="SyntaxTree\LessThanEqual.cs" />
+    <Compile Include="SyntaxTree\Node.cs" />
+    <Compile Include="SyntaxTree\Power.cs" />
+    <Compile Include="SyntaxTree\Randomize.cs" />
+    <Compile Include="SyntaxTree\Statement.cs" />
+    <Compile Include="SyntaxTree\Subroutine.cs" />
+    <Compile Include="SyntaxTree\Subtract.cs" />
+    <Compile Include="SyntaxTree\VariableReference.cs" />
+    <Compile Include="SyntaxTree\Print.cs" />
+    <Compile Include="SyntaxTree\StringLiteral.cs" />
+    <Compile Include="Token.cs" />
+    <Compile Include="Variable.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="helloworld.mbas" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TiBasicRuntime\TiBasicRuntime.csproj">
+      <Project>{3EF3FB61-5A24-4268-90EC-8FF9101CEF7D}</Project>
+      <Name>TiBasicRuntime</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
