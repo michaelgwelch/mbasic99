@@ -59,9 +59,9 @@ namespace mbasic.SyntaxTree
         public override void Emit(ILGenerator gen, bool labelSetAlready)
         {
             if (!labelSetAlready) MarkLabel(gen);
+            MarkSequencePoint(gen);
             Label falseCase = gen.DefineLabel();
             conditional.Emit(gen);
-            MarkSequencePoint(gen);
             gen.Emit(OpCodes.Brfalse_S, falseCase);
             jmp.Emit(gen, true);
             gen.MarkLabel(falseCase);

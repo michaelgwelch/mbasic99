@@ -216,12 +216,12 @@ namespace mbasic
                     Token l = lookahead;
                     Match(lookahead);
                     r2 = RelationalExpr();
-                    if (l == Token.Equals) r3 = new Equals(r1, r2, line);
-                    else if (l == Token.LessThan) r3 = new LessThan(r1, r2, line);
-                    else if (l == Token.LessThanEqual) r3 = new LessThanEqual(r1, r2, line);
-                    else if (l == Token.GreaterThan) r3 = new Not(new LessThanEqual(r1, r2, line), line);
-                    else if (l == Token.GreaterThanEqual) r3 = new Not(new LessThan(r1, r2, line), line);
-                    else if (l == Token.NotEquals) r3 = new Not(new Equals(r1, r2, line), line);
+                    if (l == Token.Equals) r3 = RelationalExpression.CompareEquals(r1, r2, line);
+                    else if (l == Token.LessThan) r3 = RelationalExpression.CompareLessThan(r1, r2, line);
+                    else if (l == Token.LessThanEqual) r3 = RelationalExpression.CompareLessThanEquals(r1, r2, line);
+                    else if (l == Token.GreaterThan) r3 = RelationalExpression.CompareGreaterThan(r1, r2, line);
+                    else if (l == Token.GreaterThanEqual) r3 = RelationalExpression.CompareGreaterThanEquals(r1, r2, line);
+                    else if (l == Token.NotEquals) r3 = RelationalExpression.CompareNotEquals(r1, r2, line);
                     return MoreRelationalExpr(r3);
                 default:
                     break;
@@ -430,7 +430,7 @@ namespace mbasic
 
             Assign init = new Assign(index, startVal, line);
             Assign update = new Assign(index, new Increment(index, line), endLine);
-            Expression comparison = new LessThanEqual(new VariableReference(index, line), endVal, line);
+            Expression comparison = new GreaterThan(new VariableReference(index, line), endVal, false, line);
             return new For(init, comparison, update, block);
         }
 

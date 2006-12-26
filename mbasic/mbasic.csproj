@@ -56,12 +56,12 @@
     <Compile Include="SyntaxTree\LessThan.cs" />
     <Compile Include="SyntaxTree\Multiply.cs" />
     <Compile Include="SyntaxTree\Negative.cs" />
-    <Compile Include="SyntaxTree\Not.cs" />
     <Compile Include="SyntaxTree\NumberLiteral.cs" />
-    <Compile Include="SyntaxTree\LessThanEqual.cs" />
+    <Compile Include="SyntaxTree\GreaterThan.cs" />
     <Compile Include="SyntaxTree\Node.cs" />
     <Compile Include="SyntaxTree\Power.cs" />
     <Compile Include="SyntaxTree\Randomize.cs" />
+    <Compile Include="SyntaxTree\RelationalExpression.cs" />
     <Compile Include="SyntaxTree\Statement.cs" />
     <Compile Include="SyntaxTree\Subroutine.cs" />
     <Compile Include="SyntaxTree\Subtract.cs" />

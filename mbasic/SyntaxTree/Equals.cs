@@ -27,44 +27,20 @@ using System.Reflection;
 
 namespace mbasic.SyntaxTree
 {
-    class Equals : Expression
+    class Equals : RelationalExpression
     {
         private static readonly MethodInfo equalsMethod =
             typeof(Object).GetMethod("Equals", new Type[] { typeof(Object), typeof(Object) });
-        Expression e1;
-        Expression e2;
-        BasicType argType;
 
-        public Equals(Expression e1, Expression e2, int line)
-            : base(line)
+        public Equals(Expression e1, Expression e2, bool not, int line)
+            : base(e1, e2, not, line)
         {
-            this.e1 = e1;
-            this.e2 = e2;
         }
 
-        public override BasicType GetBasicType()
+        protected override void EmitOperation(ILGenerator gen)
         {
-            BasicType t1 = e1.GetBasicType();
-            BasicType t2 = e2.GetBasicType();
-            if (t1 == t2)
-            {
-                argType = t1;
-                return BasicType.Number;
-            }
-            return BasicType.Error;
-        }
-
-        public override void Emit(ILGenerator gen)
-        {
-            e1.Emit(gen);
-            e2.Emit(gen);
             if (argType == BasicType.Number) gen.Emit(OpCodes.Ceq);
             else gen.Emit(OpCodes.Call, equalsMethod);
-
-            // TI Basic uses -1/0, .NET uses 1/0, plus we need to convert from Int32 to double
-            gen.Emit(OpCodes.Conv_R8);
-            gen.Emit(OpCodes.Neg);
-
         }
     }
 }

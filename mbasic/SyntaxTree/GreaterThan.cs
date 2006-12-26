@@ -26,32 +26,31 @@ using System.Reflection.Emit;
 
 namespace mbasic.SyntaxTree
 {
-    class LessThanEqual : Expression
+    class GreaterThan : RelationalExpression
     {
-        Expression e1;
-        Expression e2;
-        public LessThanEqual(Expression expr1, Expression expr2, int line)
-            : base(line)
+        
+        public GreaterThan(Expression expr1, Expression expr2, bool not,
+            int line)
+            : base(expr1, expr2, not, line)
         {
-            this.e1 = expr1;
-            this.e2 = expr2;
         }
 
-        public override void Emit(ILGenerator gen)
+        protected override void EmitOperation(ILGenerator gen)
         {
-            e1.Emit(gen);
-            e2.Emit(gen);
-            gen.Emit(OpCodes.Cgt);
-            gen.Emit(OpCodes.Ldc_I4_0);
-            gen.Emit(OpCodes.Ceq);
-            // TI Basic uses -1/0, .NET uses 1/0, plus we need to convert from Int32 to double
-            gen.Emit(OpCodes.Conv_R8);
-            gen.Emit(OpCodes.Neg);
+            if (argType == BasicType.Number)
+            {
+                // Do a > comparison
+                gen.Emit(OpCodes.Cgt);
+            }
+            else
+            {
+                // Do a > comparison
+                gen.Emit(OpCodes.Call, compareMethod);
+                gen.Emit(OpCodes.Ldc_I4_1);
+                gen.Emit(OpCodes.Ceq);
+            }
+
         }
 
-        public override BasicType GetBasicType()
-        {
-            return BasicType.Number;
-        }
     }
 }

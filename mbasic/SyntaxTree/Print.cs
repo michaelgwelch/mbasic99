@@ -49,8 +49,8 @@ namespace mbasic.SyntaxTree
         public override void Emit(ILGenerator gen, bool labelSetAlready)
         {
             if (!labelSetAlready) MarkLabel(gen);
-            value.Emit(gen);
             MarkSequencePoint(gen);
+            value.Emit(gen);
             if (printItemType == BasicType.String) gen.EmitCall(OpCodes.Call, methodInfoString, new Type[0]);
             else gen.EmitCall(OpCodes.Call, methodInfoNum, new Type[0]);
 

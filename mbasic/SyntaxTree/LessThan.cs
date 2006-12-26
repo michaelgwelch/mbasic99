@@ -22,39 +22,28 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Reflection.Emit;
+using System.Reflection;
 namespace mbasic.SyntaxTree
 {
-    class LessThan : Expression
+    class LessThan : RelationalExpression
     {
-        Expression e1;
-        Expression e2;
-        BasicType type;
 
-        public LessThan(Expression e1, Expression e2, int line)
-            : base(line)
+        public LessThan(Expression e1, Expression e2, bool not, int line)
+            : base(e1, e2, not, line)
         {
-            this.e1 = e1;
-            this.e2 = e2;
         }
 
-        public override BasicType GetBasicType()
-        {
-            type = BasicType.Number;
-            if (e1.GetBasicType() == BasicType.Number && e2.GetBasicType() == BasicType.Number)
-                return type;
 
-            TypeMismtach();
-            return type;
-        }
 
-        public override void Emit(ILGenerator gen)
+        protected override void EmitOperation(ILGenerator gen)
         {
-            e1.Emit(gen);
-            e2.Emit(gen);
-            gen.Emit(OpCodes.Clt);
-            // TI Basic uses -1/0, .NET uses 1/0, plus we need to convert from Int32 to double
-            gen.Emit(OpCodes.Conv_R8);
-            gen.Emit(OpCodes.Neg);
+            if (argType == BasicType.Number) gen.Emit(OpCodes.Clt);
+            else
+            {
+                gen.Emit(OpCodes.Call, compareMethod);
+                gen.Emit(OpCodes.Ldc_I4, -1);
+                gen.Emit(OpCodes.Ceq);
+            }
         }
     }
 }
