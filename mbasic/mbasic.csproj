@@ -74,15 +74,27 @@
     <Compile Include="Variable.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="ForStatementTest.mbas" />
-    <None Include="helloworld.mbas" />
-    <None Include="print.mbas" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\TiBasicRuntime\TiBasicRuntime.csproj">
       <Project>{3EF3FB61-5A24-4268-90EC-8FF9101CEF7D}</Project>
       <Name>TiBasicRuntime</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\samples\ForStatementTest.mbas">
+      <Link>samples\ForStatementTest.mbas</Link>
+    </None>
+    <None Include="..\samples\helloworld.mbas">
+      <Link>samples\helloworld.mbas</Link>
+    </None>
+    <None Include="..\samples\print.mbas">
+      <Link>samples\print.mbas</Link>
+    </None>
+    <None Include="..\samples\secretnum.mbas">
+      <Link>samples\secretnum.mbas</Link>
+    </None>
+    <None Include="..\samples\testPrint.py">
+      <Link>samples\testPrint.py</Link>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
