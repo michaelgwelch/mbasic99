@@ -27,10 +27,14 @@ namespace mbasic.SyntaxTree
 {
     abstract class Expression : Node
     {
-        protected string label;
         public abstract BasicType GetBasicType();
 
-        protected Expression(int line) : base(line) { label = lexer.Label; }
+        protected Expression(LineId line) : base(line) { }
 
+        protected void TypeMismtach()
+        {
+            string msg = String.Format("Type Mismatch On {0}", line.Label);
+            throw new Exception(msg);
+        }
     }
 }

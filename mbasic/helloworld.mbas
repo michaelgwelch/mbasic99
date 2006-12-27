@@ -2,5 +2,17 @@
 
 100 print -10
 105 print 7.1
+106 print "abcdefghijklmnopqrstuvwxyzabcdefghijk"
 110 print .0000000001978531
 120 print .0000000001978535
+130 print "A"::"B"
+
+
+150 A=-26
+160 B=-33
+170 C$="HELLO"
+180 D$="HOW ARE YOU?"
+190 PRINT A;B;C$;D$
+
+200 PRINT TAB(5);"Hello from 5"
+210 PRINT TAB(6);"Hello from 6"

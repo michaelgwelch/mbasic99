@@ -34,6 +34,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Lexer.cs" />
+    <Compile Include="LineId.cs" />
     <Compile Include="Parser.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -72,7 +73,9 @@
     <Compile Include="Variable.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="ForStatementTest.mbas" />
     <None Include="helloworld.mbas" />
+    <None Include="print.mbas" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TiBasicRuntime\TiBasicRuntime.csproj">

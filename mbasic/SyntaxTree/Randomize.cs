@@ -39,12 +39,12 @@ namespace mbasic.SyntaxTree
         int seedValue;
         bool seedSpecified;
 
-        public Randomize(int line) : base(line) 
+        public Randomize(LineId line) : base(line) 
         {
             seedSpecified = false;
         }
 
-        public Randomize(int seedValue, int line)
+        public Randomize(int seedValue, LineId line)
             : base(line)
         {
             this.seedValue = seedValue;

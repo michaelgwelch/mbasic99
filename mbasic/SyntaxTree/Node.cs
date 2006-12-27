@@ -38,24 +38,19 @@ using System.Reflection;
         public static LabelList labels;
         public static Label endLabel;
 
+        protected Node(LineId line) { this.line = line; }
+
         public abstract void Emit(ILGenerator gen);
+        protected readonly LineId line;
 
         public static bool debug;
         public static ISymbolDocumentWriter writer;
-        protected int line;
-        protected Node(int lineNumber)
-        {
-            this.line = lineNumber;
-        }
 
 
 
 
-        protected void TypeMismtach()
-        {
-            string msg = String.Format("Type Mismatch on line {0}", line);
-            throw new Exception(msg);
-        }
+
+
 
         private static readonly MethodInfo writeMethod =
             typeof(Console).GetMethod("Write", new Type[] { typeof(string) });

@@ -39,7 +39,12 @@ namespace mbasic
         {
             bool debug = true;
             bool runit = true;
+
             string fileName = args[0];
+            string assemblyName = Path.GetFileNameWithoutExtension(fileName);
+            string moduleName = assemblyName + ".exe";
+            string exeName = assemblyName + ".exe";
+
             Stream stream = File.OpenRead(fileName);
             SymbolTable symbols = new SymbolTable();
             InitializeReservedWords(symbols);
@@ -49,9 +54,8 @@ namespace mbasic
             Statement n = parser.Parse();
 
             Node.symbols = symbols;
-
             AppDomain domain = AppDomain.CurrentDomain;
-            AssemblyName name = new AssemblyName("myassembly");
+            AssemblyName name = new AssemblyName(assemblyName);
             AssemblyBuilder bldr = domain.DefineDynamicAssembly(name, AssemblyBuilderAccess.RunAndSave);
 
             if (debug)
@@ -63,11 +67,10 @@ namespace mbasic
                     DebuggableAttribute.DebuggingModes.Default });
                 bldr.SetCustomAttribute(daBuilder);
             }
-            ModuleBuilder mbldr = bldr.DefineDynamicModule("mymodule1", "myassembly.exe", debug);
+            ModuleBuilder mbldr = bldr.DefineDynamicModule(moduleName, exeName, debug);
 
-            TypeBuilder typeBuilder = mbldr.DefineType("Program", TypeAttributes.BeforeFieldInit 
+            TypeBuilder typeBuilder = mbldr.DefineType("TiBasic.Program", TypeAttributes.BeforeFieldInit 
                 | TypeAttributes.Sealed | TypeAttributes.AnsiClass | TypeAttributes.Abstract);
-
 
 
 
@@ -116,7 +119,7 @@ namespace mbasic
 
             Type program = typeBuilder.CreateType();
             bldr.SetEntryPoint(mthdbldr);
-            bldr.Save("myassembly.exe");
+            bldr.Save(exeName);
 
             if (runit)
             {
@@ -142,6 +145,7 @@ namespace mbasic
             symbols.ReserveWord("LET", Token.Let);
             symbols.ReserveWord("END", Token.End);
             symbols.ReserveWord("STOP", Token.End);
+            symbols.ReserveWord("TAB", Token.Tab);
 
             // String Functionis
             symbols.ReserveWord("ASC", Token.Function);

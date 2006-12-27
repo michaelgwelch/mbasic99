@@ -29,7 +29,7 @@ namespace mbasic.SyntaxTree
     internal class VariableReference : Expression
     {
         int index; // index into variables symbol table
-        public VariableReference(int index, int line)
+        public VariableReference(int index, LineId line)
             : base(line)
         {
             this.index = index;

@@ -30,7 +30,7 @@ namespace mbasic.SyntaxTree
     {
         
         public GreaterThan(Expression expr1, Expression expr2, bool not,
-            int line)
+            LineId line)
             : base(expr1, expr2, not, line)
         {
         }

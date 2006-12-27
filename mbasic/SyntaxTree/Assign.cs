@@ -28,7 +28,7 @@ namespace mbasic.SyntaxTree
     {
         int localIndex;
         Expression value;
-        public Assign(int index, Expression value, int line)
+        public Assign(int index, Expression value, LineId line)
             : base(line)
         {
             this.localIndex = index;

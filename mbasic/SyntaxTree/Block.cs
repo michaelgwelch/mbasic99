@@ -32,7 +32,7 @@ namespace mbasic.SyntaxTree
     {
         StatementList stmts;
         public Block(StatementList stmts)
-            : base(-1)
+            : base(LineId.None)
         {
             this.stmts = stmts;
         }

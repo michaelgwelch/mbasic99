@@ -33,7 +33,7 @@ namespace mbasic.SyntaxTree
             typeof(Console).GetMethod("Clear");
 
         string name;
-        public Subroutine(string name, int lineNumber)
+        public Subroutine(string name, LineId lineNumber)
             : base(lineNumber)
         {
             this.name = name;

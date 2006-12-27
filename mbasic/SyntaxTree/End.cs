@@ -26,7 +26,7 @@ namespace mbasic.SyntaxTree
 {
     class End : Statement
     {
-        public End(int line) : base(line) { }
+        public End(LineId line) : base(line) { }
 
         public override void CheckTypes()
         {

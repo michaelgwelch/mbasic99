@@ -53,7 +53,7 @@ namespace mbasic
             if (lookahead == Token.EOF && t == Token.EndOfLine) return;
 
             if (lookahead == t) lookahead = lexer.Next();
-            else throw new Exception(String.Format("Parsing exception on label {0}", lexer.Label));
+            else throw new Exception(String.Format("Parsing exception on label {0}", lexer.LineId.Label));
         }
 
         private Statement Statement()
@@ -99,14 +99,14 @@ namespace mbasic
 
         private Statement EndStatement()
         {
-            int line = lexer.LineNumber;
+            LineId line = lexer.LineId;
             Match(Token.End);
             return new End(line);
         }
 
         private Statement CallSubroutine()
         {
-            int line = lexer.LineNumber;
+            LineId line = lexer.LineId;
             Match(Token.Call);
             string name = lexer.Value;
             Match(Token.Subroutine);
@@ -116,20 +116,21 @@ namespace mbasic
 
         private Statement Randomize()
         {
-            int lineNumber = lexer.LineNumber;
+            LineId line = lexer.LineId;
             Match(Token.Randomize);
             if (lookahead == Token.Number)
             {
                 double seedValue = lexer.NumericValue;
                 Match(Token.Number);
-                return new Randomize(Convert.ToInt32(Math.Floor(seedValue)), lexer.LineNumber);
+                return new Randomize(Convert.ToInt32(Math.Floor(seedValue)), 
+                    line);
             }
-            return new Randomize(lineNumber);
+            return new Randomize(line);
         }
 
         private Statement IfStatement()
         {
-            int line = lexer.LineNumber;
+            LineId line = lexer.LineId;
             Match(Token.If);
             Expression conditional = Expression();
             Match(Token.Then);
@@ -147,7 +148,7 @@ namespace mbasic
 
         private Statement Goto()
         {
-            int line = lexer.LineNumber;
+            LineId line = lexer.LineId;
             Match(Token.Goto);
             string label = lexer.Value;
             Match(Token.Number);
@@ -156,7 +157,7 @@ namespace mbasic
 
         private Statement Input()
         {
-            int line = lexer.LineNumber;
+            LineId line = lexer.LineId;
             Match(Token.Input);
             int index = lexer.SymbolIndex;
             Match(Token.Variable);
@@ -165,7 +166,7 @@ namespace mbasic
 
         private Statement Assign()
         {
-            int line = lexer.LineNumber;
+            LineId line = lexer.LineId;
             int index = lexer.SymbolIndex;
             Match(Token.Variable);
             Match(Token.Equals);
@@ -185,7 +186,7 @@ namespace mbasic
         {
             if (lookahead == Token.Concatenate)
             {
-                int line = lexer.LineNumber;
+                LineId line = lexer.LineId;
                 Match(Token.Concatenate);
                 Expression s2 = StringExpr();
                 return MoreStringExpr(new Concatenate(s1, s2, line));
@@ -203,7 +204,7 @@ namespace mbasic
         {
             Expression r2;
             Expression r3=null;
-            int line = lexer.LineNumber;
+            LineId line = lexer.LineId;
 
             switch (lookahead)
             {
@@ -237,7 +238,7 @@ namespace mbasic
 
         Expression MoreAdditionExpr(Expression a1)
         {
-            int line = lexer.LineNumber;
+            LineId line = lexer.LineId;
             switch (lookahead)
             {
                 case Token.Plus:
@@ -263,7 +264,7 @@ namespace mbasic
 
         Expression MoreMultiplicationExpr(Expression m1)
         {
-            int line = lexer.LineNumber;
+            LineId line = lexer.LineId;
             switch (lookahead)
             {
                 case Token.Times:
@@ -289,7 +290,7 @@ namespace mbasic
 
         Expression MoreFactors(Expression f1)
         {
-            int line = lexer.LineNumber;
+            LineId line = lexer.LineId;
             if (lookahead == Token.Exponent)
             {
                 Match(lookahead);
@@ -313,7 +314,7 @@ namespace mbasic
                     string name = lexer.Value;
                     Match(Token.Function);
                     Expression[] args = ArgList();
-                    return new Function(name, lexer.LineNumber, args);
+                    return new Function(name, lexer.LineId, args);
 
                 case Token.Variable:
                     return VariableReference();
@@ -354,28 +355,28 @@ namespace mbasic
         Expression UnaryMinus()
         {
             Match(Token.Minus);
-            int line = lexer.LineNumber;
+            LineId line = lexer.LineId;
             Expression e = Expression();
             return new Negative(e, line);
         }
 
         Expression StringLiteral()
         {
-            StringLiteral literal = new StringLiteral(lexer.Value, lexer.LineNumber);
+            StringLiteral literal = new StringLiteral(lexer.Value, lexer.LineId);
             Match(Token.String);
             return literal;
         }
 
         Expression NumberLiteral()
         {
-            NumberLiteral literal = new NumberLiteral(lexer.NumericValue, lexer.LineNumber);
+            NumberLiteral literal = new NumberLiteral(lexer.NumericValue, lexer.LineId);
             Match(Token.Number);
             return literal;
         }
 
         Expression VariableReference()
         {
-            VariableReference var = new VariableReference(lexer.SymbolIndex, lexer.LineNumber);
+            VariableReference var = new VariableReference(lexer.SymbolIndex, lexer.LineId);
             Match(Token.Variable);
             return var;
         }
@@ -384,29 +385,88 @@ namespace mbasic
         private Expression Negative()
         {
             Match(Token.Minus);
-            return new Negative(Expression(), lexer.LineNumber);
+            return new Negative(Expression(), lexer.LineId);
         }
 
         #endregion Expression Handling
 
         private Statement Print()
         {
-            int line = lexer.LineNumber;
+            LineId line = lexer.LineId;
             Match(Token.Print);
             return new Print(PrintList(), line);
         }
 
-        private Expression PrintList()
+        private Expression[] PrintList()
         {
-            return Expression();
+            List<Expression> list = new List<Expression>();
+
+            switch (lookahead)
+            {
+                case Token.Plus:
+                case Token.Minus:
+                case Token.Function:
+                case Token.LeftParen:
+                case Token.Number:
+                case Token.String:
+                case Token.Variable:
+                    list.Add(Expression());
+                    list.AddRange(MorePrintList());
+                    break;
+                case Token.Comma:
+                case Token.Semicolon:
+                case Token.Colon:
+                    list.AddRange(MorePrintList());
+                    break;
+                case Token.Tab:
+                    Match(Token.Tab);
+                    Match(Token.LeftParen);
+                    list.Add(new StringLiteral("\t" + lexer.NumericValue, lexer.LineId));
+                    
+                    Match(Token.Number);
+                    Match(Token.RightParen);
+                    list.AddRange(MorePrintList());
+                    break;
+                case Token.EndOfLine:
+                case Token.EOF:
+                    break;
+                default:
+                    throw new Exception("Error parsing print list on " + lexer.LineId.Label);
+            }
+            
+            return list.ToArray();
         }
+
+        private Expression[] MorePrintList()
+        {
+            List<Expression> list = new List<Expression>();
+            switch (lookahead)
+            {
+                case Token.Semicolon:
+                    list.Add(new StringLiteral("\0", lexer.LineId));
+                    Match(Token.Semicolon);
+                    break;
+                case Token.Colon:
+                    list.Add(new StringLiteral("\n", lexer.LineId));
+                    Match(Token.Colon);
+                    break;
+                case Token.Comma:
+                    list.Add(new StringLiteral("\t", lexer.LineId));
+                    Match(Token.Comma);
+                    break;
+            }
+            list.AddRange(PrintList());
+            return list.ToArray();
+
+        }
+
 
 
         private void Error() { throw new Exception("Error during parsing"); }
 
         private Statement ForStatement()
         {
-            int line = lexer.LineNumber;
+            LineId line = lexer.LineId;
             Match(Token.For);
 
             int index = lexer.SymbolIndex;
@@ -422,15 +482,16 @@ namespace mbasic
 
             Match(Token.EndOfLine);
 
+            LineId blockStart = lexer.LineId;
             Block block = Block(Token.Next);
 
-            int endLine = lexer.LineNumber;
+            LineId endLine = lexer.LineId;
             Match(Token.Next);
             Match(Token.Variable);
 
             Assign init = new Assign(index, startVal, line);
-            Assign update = new Assign(index, new Increment(index, line), endLine);
-            Expression comparison = new GreaterThan(new VariableReference(index, line), endVal, false, line);
+            Assign update = new Assign(index, new Increment(index, endLine), endLine);
+            Expression comparison = RelationalExpression.CompareLessThanEquals(new VariableReference(index, line), endVal, line);
             return new For(init, comparison, update, block);
         }
 

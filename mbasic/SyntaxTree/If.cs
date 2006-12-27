@@ -30,14 +30,14 @@ namespace mbasic.SyntaxTree
         Goto jmp;
         Goto elseJmp;
         Expression conditional;
-        public If(Expression conditional, string label, int line) : base(line)
+        public If(Expression conditional, string label, LineId line) : base(line)
         {
             jmp = new Goto(label, line);
             this.conditional = conditional;
         }
 
         public If(Expression conditional, string label, string elseLabel,
-            int line)
+            LineId line)
             : base(line)
         {
             jmp = new Goto(label, line);
@@ -48,7 +48,6 @@ namespace mbasic.SyntaxTree
         public override void CheckTypes()
         {
             if (conditional.GetBasicType() == BasicType.Number) return;
-            TypeMismtach();
         }
 
         public override void Emit(ILGenerator gen)

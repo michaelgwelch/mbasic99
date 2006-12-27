@@ -29,30 +29,27 @@ namespace mbasic.SyntaxTree
 
     abstract class Statement : Node
     {
-        protected string label; // The actual string label from source (e.g. 100)
         Label lineLabel;        // A .NET label used to mark this location.
 
-        protected Statement(int line)
-            : base(line)
+        protected Statement(LineId line) : base(line)
         {
-            this.label = lexer.Label;
         }
         public abstract void CheckTypes();
         public virtual void RecordLabels(ILGenerator gen)
         {
+            if (labels.ContainsKey(line.Label)) return;
             this.lineLabel = gen.DefineLabel();
-            if (labels.ContainsKey(label)) return;
 
-            labels.Add(label, lineLabel);
+            labels.Add(line.Label, lineLabel);
         }
 
         private static List<int> lines = new List<int>();
         protected void MarkSequencePoint(ILGenerator gen)
         {
-            if (debug & lines.BinarySearch(line) < 0)
+            if (debug & lines.BinarySearch(line.Number) < 0)
             {
-                gen.MarkSequencePoint(writer, line, 1, line, 100);
-                lines.Add(line);
+                gen.MarkSequencePoint(writer, line.Number, 1, line.Number, 100);
+                lines.Add(line.Number);
             }
         }
 

@@ -51,7 +51,7 @@ namespace mbasic
 
         public double NumericValue { get { return double.Parse(value); } }
 
-        public string Label { get { return label; } }
+        //public string Label { get { return label; } }
 
         public Token Next()
         {
@@ -133,6 +133,8 @@ namespace mbasic
                     case '^':
                     case '(':
                     case ')':
+                    case ';':
+                    case ':':
                         reader.Advance();
                         return (Token) ch;
                     default:
@@ -266,7 +268,8 @@ namespace mbasic
             return Token.String;
         }
 
-        public int LineNumber { get { return reader.LineNumber; } }
+        public LineId LineId { get { return new LineId(reader.LineNumber, label); } }
+        //public int LineNumber { get { return reader.LineNumber; } }
         public int Column { get { return reader.Column; } }
 
         private class Reader

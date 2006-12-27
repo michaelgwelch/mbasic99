@@ -36,7 +36,8 @@ namespace mbasic.SyntaxTree
             new Type[] { typeof(string), Type.GetType("System.Double&") });
         int index;
         BasicType varType;
-        public Input(int index, int line) : base(line)
+        public Input(int index, LineId line)
+            : base(line)
         {
             this.index = index; 
         }

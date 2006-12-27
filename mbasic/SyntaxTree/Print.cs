@@ -29,17 +29,15 @@ namespace mbasic.SyntaxTree
 {
     internal class Print : Statement
     {
-        static readonly MethodInfo methodInfoString = 
-            typeof(Console).GetMethod("WriteLine", new Type[] { typeof(string) });
+        static readonly MethodInfo printMethod = 
+            typeof(BuiltIns).GetMethod("Print");
 
-        static readonly MethodInfo toStringMethod =
-            typeof(Radix100).GetMethod("ToString", new Type[] { typeof(double) });
-
-        Expression value;
-        BasicType printItemType;
-        public Print(Expression value, int line) : base(line)
+        Expression[] values;
+        BasicType[] printItemTypes;
+        public Print(Expression[] values, LineId line) : base(line)
         {
-            this.value = value;
+            this.values = values;
+            printItemTypes = new BasicType[values.Length];
         }
 
         public override void Emit(ILGenerator gen)
@@ -51,16 +49,32 @@ namespace mbasic.SyntaxTree
         {
             if (!labelSetAlready) MarkLabel(gen);
             MarkSequencePoint(gen);
-            value.Emit(gen);
-            if (printItemType == BasicType.Number) gen.Emit(OpCodes.Call, toStringMethod);
 
-            gen.EmitCall(OpCodes.Call, methodInfoString, new Type[0]);
+
+            // create object array
+            gen.Emit(OpCodes.Ldc_I4, values.Length);
+            gen.Emit(OpCodes.Newarr, typeof(object));
+            
+
+            for (int i = 0; i < values.Length; i++)
+            {
+                gen.Emit(OpCodes.Dup); // Duplicate the array reference, so it's still on stack after this use
+                gen.Emit(OpCodes.Ldc_I4, i);
+                values[i].Emit(gen);
+                if (printItemTypes[i] == BasicType.Number) gen.Emit(OpCodes.Box, typeof(double));
+                gen.Emit(OpCodes.Stelem_Ref);
+            }
+            gen.Emit(OpCodes.Call, printMethod);
+
         }
 
         public override void CheckTypes()
         {
-            printItemType = value.GetBasicType();
-            if (printItemType == BasicType.Error) throw new Exception("Bad type in print statement");
+            for (int i = 0; i < values.Length; i++)
+            {
+                printItemTypes[i] = values[i].GetBasicType();
+                if (printItemTypes[i] == BasicType.Error) throw new Exception("Bad type in print statement");
+            }
         }
 
 

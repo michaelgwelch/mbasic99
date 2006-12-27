@@ -39,7 +39,7 @@ namespace mbasic.SyntaxTree
             new Type[] { typeof(string), typeof(string) });
 
         protected RelationalExpression(Expression e1,
-            Expression e2, bool not, int line)
+            Expression e2, bool not, LineId line)
             : base(line)
         {
             this.e1 = e1;
@@ -82,37 +82,37 @@ namespace mbasic.SyntaxTree
         protected abstract void EmitOperation(ILGenerator gen);
 
         public static RelationalExpression CompareEquals(
-            Expression e1, Expression e2, int line)
+            Expression e1, Expression e2, LineId line)
         {
             return new Equals(e1, e2, false, line);
         }
 
         public static RelationalExpression CompareNotEquals(
-            Expression e1, Expression e2, int line)
+            Expression e1, Expression e2, LineId line)
         {
             return new Equals(e1, e2, true, line);
         }
 
         public static RelationalExpression CompareLessThan(
-            Expression e1, Expression e2, int line)
+            Expression e1, Expression e2, LineId line)
         {
             return new LessThan(e1, e2, false, line);
         }
 
         public static RelationalExpression CompareLessThanEquals(
-            Expression e1, Expression e2, int line)
+            Expression e1, Expression e2, LineId line)
         {
             return new GreaterThan(e1, e2, true, line);
         }
 
         public static RelationalExpression CompareGreaterThan(
-            Expression e1, Expression e2, int line)
+            Expression e1, Expression e2, LineId line)
         {
             return new GreaterThan(e1, e2, false, line);
         }
 
         public static RelationalExpression CompareGreaterThanEquals(
-            Expression e1, Expression e2, int line)
+            Expression e1, Expression e2, LineId line)
         {
             return new LessThan(e1, e2, true, line);
         }

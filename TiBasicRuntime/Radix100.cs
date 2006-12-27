@@ -290,10 +290,10 @@ namespace TiBasicRuntime
                 if (Math.Abs(exponent) >= 50)
                 {
                     double mantissa = GetMantissa10(this);
-                    if (mantissa < 0 && exponent < 0) return String.Format("{0:0.#####}E-** ", mantissa);
-                    else if (mantissa < 0) return String.Format("{0:0.#####}E+** ", mantissa);
-                    else if (exponent > 0) return String.Format(" {0:0.#####}E+** ", mantissa);
-                    else return String.Format(" {0:0.#####}E-** ", mantissa);
+                    if (mantissa < 0 && exponent < 0) return String.Format("{0:0.#####}E-**", mantissa);
+                    else if (mantissa < 0) return String.Format("{0:0.#####}E+**", mantissa);
+                    else if (exponent > 0) return String.Format("{0:0.#####}E+**", mantissa);
+                    else return String.Format("{0:0.#####}E-**", mantissa);
                 }
                 if (exponent < -4 || exponent > 5) return ToScientificForm();
                 return ToNormalDecimalForm();
@@ -304,8 +304,7 @@ namespace TiBasicRuntime
         public string ToScientificForm()
         {
             StringBuilder bldr = new StringBuilder();
-            if (Math.Sign(this) >= 0) bldr.Append(" ");
-            else bldr.Append("-");
+            if (Math.Sign(this) < 0) bldr.Append("-");
 
             Radix100 rounded = Radix100.Round(this, 6);
             sbyte exponent = GetExponent(this);
@@ -363,7 +362,6 @@ namespace TiBasicRuntime
 
             bldr.Append("E");
             bldr.Append(decimalExponent.ToString("+00;-00"));
-            bldr.Append(" ");
             return bldr.ToString();
 
         }
@@ -371,8 +369,7 @@ namespace TiBasicRuntime
         public string ToNormalDecimalForm()
         {
             StringBuilder bldr = new StringBuilder();
-            if (Math.Sign(this) >= 0) bldr.Append(" ");
-            else bldr.Append("-");
+            if (Math.Sign(this) < 0) bldr.Append("-");
 
             Radix100 rounded = Radix100.Round(this, 10);
             bool isInteger = IsInteger;
@@ -434,7 +431,6 @@ namespace TiBasicRuntime
                 bldr.Append(firstDigit);
                 bldr.Append(secondDigit.ToString("#")); // if it is zero it won't print.
             }
-            bldr.Append(" ");
             return bldr.ToString();
 
         }

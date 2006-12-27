@@ -31,7 +31,7 @@ namespace mbasic.SyntaxTree
         Expression op2;
         BasicType type;
 
-        public Division(Expression e1, Expression e2, int line)
+        public Division(Expression e1, Expression e2, LineId line)
             : base(line)
         {
             this.op1 = e1;

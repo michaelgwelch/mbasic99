@@ -34,7 +34,7 @@ namespace mbasic.SyntaxTree
         Expression s1;
         Expression s2;
         BasicType type;
-        public Concatenate(Expression s1, Expression s2, int line)
+        public Concatenate(Expression s1, Expression s2, LineId line)
             : base(line)
         {
             this.s1 = s1;

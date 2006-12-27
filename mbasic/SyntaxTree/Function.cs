@@ -80,7 +80,7 @@ namespace mbasic.SyntaxTree
         string functionName;
         Expression[] exprs;
         BasicType[] argsTypes;
-        public Function(string name, int line, params Expression[] expressions)
+        public Function(string name, LineId line, params Expression[] expressions)
             : base(line)
         {
             this.functionName = name;
@@ -99,25 +99,25 @@ namespace mbasic.SyntaxTree
                     EmitFunctionCall(gen, intMethod, exprs[0]);
                     break;
                 case "ASC":
-                    EmitFunctionCall(gen, ascMethod, label, exprs[0]);
+                    EmitFunctionCall(gen, ascMethod, line.Label, exprs[0]);
                     break;
                 case "CHR$":
-                    EmitFunctionCall(gen, chrMethod, label, exprs[0]);
+                    EmitFunctionCall(gen, chrMethod, line.Label, exprs[0]);
                     break;
                 case "LEN":
                     EmitFunctionCall(gen, lenMethod, exprs[0]);
                     break;
                 case "POS":
-                    EmitFunctionCall(gen, posMethod, label, exprs[0], exprs[1], exprs[2]);
+                    EmitFunctionCall(gen, posMethod, line.Label, exprs[0], exprs[1], exprs[2]);
                     break;
                 case "SEG$":
-                    EmitFunctionCall(gen, segMethod, label, exprs[0], exprs[1], exprs[2]);
+                    EmitFunctionCall(gen, segMethod, line.Label, exprs[0], exprs[1], exprs[2]);
                     break;
                 case "STR$":
                     EmitFunctionCall(gen, strMethod, exprs[0]);
                     break;
                 case "VAL":
-                    EmitFunctionCall(gen, valMethod, label, exprs[0]);
+                    EmitFunctionCall(gen, valMethod, line.Label, exprs[0]);
                     break;
 
                     // Numeric Functions
@@ -134,7 +134,7 @@ namespace mbasic.SyntaxTree
                     EmitFunctionCall(gen, expMethod, exprs[0]);
                     break;
                 case "LOG":
-                    EmitFunctionCall(gen, logMethod, label, exprs[0]);
+                    EmitFunctionCall(gen, logMethod, line.Label, exprs[0]);
                     break;
                 case "SGN":
                     EmitFunctionCall(gen, sgnMethod, exprs[0]);
@@ -144,7 +144,7 @@ namespace mbasic.SyntaxTree
                     EmitFunctionCall(gen, sinMethod, exprs[0]);
                     break;
                 case "SQR":
-                    EmitFunctionCall(gen, sqrMethod, label, exprs[0]);
+                    EmitFunctionCall(gen, sqrMethod, line.Label, exprs[0]);
                     break;
                 case "TAN":
                     EmitFunctionCall(gen, tanMethod, exprs[0]);

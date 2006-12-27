@@ -28,7 +28,7 @@ namespace mbasic.SyntaxTree
     class LessThan : RelationalExpression
     {
 
-        public LessThan(Expression e1, Expression e2, bool not, int line)
+        public LessThan(Expression e1, Expression e2, bool not, LineId line)
             : base(e1, e2, not, line)
         {
         }

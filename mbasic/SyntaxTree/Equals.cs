@@ -32,7 +32,7 @@ namespace mbasic.SyntaxTree
         private static readonly MethodInfo equalsMethod =
             typeof(Object).GetMethod("Equals", new Type[] { typeof(Object), typeof(Object) });
 
-        public Equals(Expression e1, Expression e2, bool not, int line)
+        public Equals(Expression e1, Expression e2, bool not, LineId line)
             : base(e1, e2, not, line)
         {
         }

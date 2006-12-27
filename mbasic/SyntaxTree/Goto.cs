@@ -29,7 +29,7 @@ namespace mbasic.SyntaxTree
     class Goto : Statement
     {
         string destLabel;
-        public Goto(string label, int line)
+        public Goto(string label, LineId line)
             : base(line)
         {
             this.destLabel = label;

@@ -21,6 +21,7 @@
 
 internal enum Token 
 {
+    Colon       = ':',
     Comma       = ',',
     Exponent    = '^',
     LessThan    = '<',
@@ -33,6 +34,7 @@ internal enum Token
     Minus       = '-',
     Times       = '*',
     Divides     = '/',
+    Semicolon   = ';',
     And         = 256,
     Call,
     Else,
@@ -59,6 +61,7 @@ internal enum Token
     Remark, // technically not a token, and should never be returned. Used internally by lexer only.
     String,
     Subroutine,
+    Tab,
     Then,
     To,
     Variable

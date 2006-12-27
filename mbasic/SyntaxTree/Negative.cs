@@ -30,7 +30,7 @@ namespace mbasic.SyntaxTree
     {
         Expression value;
         BasicType type;
-        public Negative(Expression value, int line) : base(line)
+        public Negative(Expression value, LineId line) : base(line)
         {
             this.value = value;
         }

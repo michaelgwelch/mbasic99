@@ -18,32 +18,22 @@
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 *******************************************************************************/
 
-
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Reflection.Emit;
-
-namespace mbasic.SyntaxTree
+namespace mbasic
 {
-    internal class StringLiteral : Expression
+    using System;
+
+    class LineId
     {
-        string val;
-        public StringLiteral(string s, LineId line)
-            : base(line)
+        readonly int line;
+        readonly string label;
+        public static readonly LineId None = new LineId(-1, "");
+        public LineId(int line, string label)
         {
-            this.val = s;
+            this.label = label;
+            this.line = line;
         }
 
-        public override void Emit(ILGenerator gen)
-        {
-            gen.Emit(OpCodes.Ldstr, val);
-        }
-
-        public override BasicType GetBasicType()
-        {
-
-            return BasicType.String;
-        }
+        public string Label { get { return label; } }
+        public int Number { get { return line; } }
     }
 }

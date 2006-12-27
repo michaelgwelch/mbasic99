@@ -163,5 +163,126 @@ namespace TiBasicRuntime
                 trace = value;
             }
         }
+
+        static int printCol = 1;
+        public static void Print(params object[] items)
+        {
+            if (items.Length == 0) 
+            {
+                Console.WriteLine();
+                printCol = 1;
+                return;
+            }
+
+            bool printSepInEffect = false;
+            foreach (object o in items)
+            {
+                string s;
+                if (o is string)
+                {
+                    s = o as string;
+                    if (s.Length == 0) continue;
+                    char ch = s[0];
+                    switch (ch)
+                    {
+                        case '\0': // nothing to print.
+                            printSepInEffect = true;
+                            break;
+                        case '\t':
+                            if (s.Length == 1) PrintComma();
+                            else PrintTab(s);
+                            printSepInEffect = true;
+                            break;
+                        case '\n':
+                            PrintNewLine();
+                            printSepInEffect = true;
+                            break;
+                        default:
+                            PrintString(s);
+                            printSepInEffect = false;
+                            break;
+                    }
+                }
+                else
+                {
+                    PrintNumber((double)o);
+                    printSepInEffect = false;
+                }
+
+            }
+
+            if (!printSepInEffect) PrintNewLine();
+
+            
+        }
+
+        private static void PrintComma()
+        {
+            if (printCol < 15) PrintItem(new String(' ', 15 - printCol));
+            else PrintNewLine();
+        }
+        private static void PrintTab(string s)
+        {
+            int doubleLength = s.Length - 1;
+            double d = double.Parse(s.Substring(1, doubleLength));
+            int n = (int) (Math.Round(d) % 28) + 1;
+            if (printCol > n) PrintNewLine();
+            PrintItem(new String(' ', n - printCol));
+        }
+
+        private static void PrintSpace()
+        {
+            PrintItem(" ");
+        }
+
+        private static void PrintNumber(double d)
+        {
+            if (d >= 0) PrintSpace(); // Positive numbers are printed with leading space 
+            string s = Radix100.ToString(d);
+            if (s.Length > RemainingPrintColumns) PrintNewLine();
+            PrintItem(s);
+            if (printCol < 28) PrintSpace();
+        }
+
+        private static void PrintItem(string s)
+        {
+            Console.Write(s);
+            printCol += s.Length;
+        }
+
+        private static void PrintString(string s)
+        {
+            if (s.Length > RemainingPrintColumns)
+            {
+                if (printCol != 1) PrintNewLine();
+            }
+            if (s.Length <= 28)
+            {
+                PrintItem(s);
+                return;
+            }
+
+            int index = 0;
+            while (index < s.Length)
+            {
+                int charsToPrint = Math.Min(28, s.Length - index);
+                PrintItem(s.Substring(index, charsToPrint));
+                index += charsToPrint;
+                if (charsToPrint == 28) PrintNewLine();
+            }
+        }
+
+        private static void PrintNewLine()
+        {
+            Console.WriteLine();
+            ResetColumnPos();
+        }
+
+        private static void ResetColumnPos() { printCol = 1; }
+        private static int RemainingPrintColumns { get { return 28 - printCol + 1; } }
+
+
+        private static void PrintStuff(params object[] objects) { }
+        private static void PrintStuff2() { PrintStuff(3, 5, "hello"); }
     }
 }

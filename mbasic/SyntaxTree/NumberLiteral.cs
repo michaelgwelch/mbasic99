@@ -29,7 +29,7 @@ namespace mbasic.SyntaxTree
     internal class NumberLiteral : Expression
     {
         double val;
-        public NumberLiteral(double d, int line)
+        public NumberLiteral(double d, LineId line)
             : base(line)
         {
             this.val = d;

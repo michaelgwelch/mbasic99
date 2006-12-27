@@ -31,7 +31,7 @@ namespace mbasic.SyntaxTree
         Expression op1;
         Expression op2;
         BasicType type;
-        public Add(Expression e1, Expression e2, int line)
+        public Add(Expression e1, Expression e2, LineId line)
             : base(line)
         {
             this.op1 = e1;

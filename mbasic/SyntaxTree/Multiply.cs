@@ -32,7 +32,7 @@ namespace mbasic.SyntaxTree
         Expression op2;
         BasicType type;
 
-        public Multiply(Expression e1, Expression e2, int line)
+        public Multiply(Expression e1, Expression e2, LineId line)
             : base(line)
         {
             this.op1 = e1;

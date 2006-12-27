@@ -28,7 +28,7 @@ namespace mbasic.SyntaxTree
     class Increment : Expression
     {
         int index;
-        public Increment(int index, int line)
+        public Increment(int index, LineId line)
             : base(line)
         {
             this.index = index;
