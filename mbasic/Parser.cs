@@ -421,9 +421,7 @@ namespace mbasic
                 case Token.Tab:
                     Match(Token.Tab);
                     Match(Token.LeftParen);
-                    list.Add(new StringLiteral("\t" + lexer.NumericValue, lexer.LineId));
-                    
-                    Match(Token.Number);
+                    list.Add(new Tab(Expression(), lexer.LineId));
                     Match(Token.RightParen);
                     list.AddRange(MorePrintList());
                     break;

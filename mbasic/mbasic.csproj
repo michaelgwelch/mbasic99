@@ -66,6 +66,7 @@
     <Compile Include="SyntaxTree\Statement.cs" />
     <Compile Include="SyntaxTree\Subroutine.cs" />
     <Compile Include="SyntaxTree\Subtract.cs" />
+    <Compile Include="SyntaxTree\Tab.cs" />
     <Compile Include="SyntaxTree\VariableReference.cs" />
     <Compile Include="SyntaxTree\Print.cs" />
     <Compile Include="SyntaxTree\StringLiteral.cs" />

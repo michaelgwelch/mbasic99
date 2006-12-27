@@ -225,7 +225,8 @@ namespace TiBasicRuntime
         {
             int doubleLength = s.Length - 1;
             double d = double.Parse(s.Substring(1, doubleLength));
-            int n = (int) (Math.Round(d) % 28) + 1;
+            int n = (int) (Math.Round(d) % 28);
+            if (n < 1) n = 1;
             if (printCol > n) PrintNewLine();
             PrintItem(new String(' ', n - printCol));
         }
@@ -281,8 +282,5 @@ namespace TiBasicRuntime
         private static void ResetColumnPos() { printCol = 1; }
         private static int RemainingPrintColumns { get { return 28 - printCol + 1; } }
 
-
-        private static void PrintStuff(params object[] objects) { }
-        private static void PrintStuff2() { PrintStuff(3, 5, "hello"); }
     }
 }

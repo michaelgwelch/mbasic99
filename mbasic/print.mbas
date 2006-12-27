@@ -51,3 +51,25 @@
 910 B$="ZONE 2"
 920 PRINT A$,B$
 930 PRINT A$:,B$,A$
+
+998 REM Scenarios involving TAB from II-68 (Modified to use
+999 REM floating point numbers and more complex expressions in some of the TAB commands)
+1000 A=23.5
+1010 B=48.6
+1020 MSG$="HELLO"
+1030 REM N > 28
+1040 PRINT TAB(4.9);MSG$;TAB(33.1);MSG$
+1050 REM Characters already printed <= N
+1060 PRINT A;TAB(10);B
+1070 REM Characters already print > N
+1080 PRINT TAB(3);A;TAB(1+2);B
+
+1100 A=326
+1110 B=79
+1111 C1 = 3
+1112 C2 = 5.1
+1120 PRINT A;TAB(C1*C2);B
+1130 PRINT A,B
+1140 PRINT A;TAB(15),B
+1150 PRINT TAB(C2);A;TAB(C2+1);B
+1160 PRINT A;TAB(3+2*20);B

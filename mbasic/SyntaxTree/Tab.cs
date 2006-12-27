@@ -18,33 +18,40 @@
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 *******************************************************************************/
 
-
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Reflection.Emit;
-using System.Diagnostics.SymbolStore;
+using System.Reflection;
+using TiBasicRuntime;
 
 namespace mbasic.SyntaxTree
 {
-    using LabelList = System.Collections.Generic.SortedList<string, Label>;
-using System.Reflection;
-
-    internal abstract class Node
+    class Tab : Expression
     {
-        public static SymbolTable symbols;
-        public static List<LocalBuilder> locals;
-        public static Lexer lexer;
-        public static LabelList labels;
-        public static Label endLabel;
+        Expression expr;
+        public Tab(Expression expr, LineId line)
+            : base(line)
+        {
+            this.expr = expr;
+        }
+        public override BasicType GetBasicType()
+        {
+            if (expr.GetBasicType() == BasicType.Number) return BasicType.String;
+            return BasicType.Error;
+        }
 
-        protected Node(LineId line) { this.line = line; }
+        private static readonly MethodInfo concatenateMethod =
+            typeof(String).GetMethod("Concat", new Type[] { typeof(string), typeof(string) });
+        private static readonly MethodInfo toStringMethod =
+            typeof(Radix100).GetMethod("ToString", new Type[] { typeof(double) });
 
-        public abstract void Emit(ILGenerator gen);
-        protected readonly LineId line;
-
-        public static bool debug;
-        public static ISymbolDocumentWriter writer;
-
+        public override void Emit(ILGenerator gen)
+        {
+            gen.Emit(OpCodes.Ldstr, "\t");
+            expr.Emit(gen); // will load a double on the stack
+            gen.Emit(OpCodes.Call, toStringMethod); // will convert number to string
+            gen.Emit(OpCodes.Call, concatenateMethod); // will concatenate them into one string
+        }
     }
 }
