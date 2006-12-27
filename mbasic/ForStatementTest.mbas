@@ -1,0 +1,3 @@
+100 For i = 1 to 10
+120 print i
+130 Next i
