@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Reflection.Emit;
 using System.Reflection;
+using TiBasicRuntime;
 namespace mbasic.SyntaxTree
 {
     internal class Print : Statement
@@ -31,8 +32,8 @@ namespace mbasic.SyntaxTree
         static readonly MethodInfo methodInfoString = 
             typeof(Console).GetMethod("WriteLine", new Type[] { typeof(string) });
 
-        static readonly MethodInfo methodInfoNum =
-            typeof(Console).GetMethod("WriteLine", new Type[] { typeof(double) });
+        static readonly MethodInfo toStringMethod =
+            typeof(Radix100).GetMethod("ToString", new Type[] { typeof(double) });
 
         Expression value;
         BasicType printItemType;
@@ -51,9 +52,9 @@ namespace mbasic.SyntaxTree
             if (!labelSetAlready) MarkLabel(gen);
             MarkSequencePoint(gen);
             value.Emit(gen);
-            if (printItemType == BasicType.String) gen.EmitCall(OpCodes.Call, methodInfoString, new Type[0]);
-            else gen.EmitCall(OpCodes.Call, methodInfoNum, new Type[0]);
+            if (printItemType == BasicType.Number) gen.Emit(OpCodes.Call, toStringMethod);
 
+            gen.EmitCall(OpCodes.Call, methodInfoString, new Type[0]);
         }
 
         public override void CheckTypes()

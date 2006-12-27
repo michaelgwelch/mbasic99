@@ -25,7 +25,7 @@ using System.Text;
 
 namespace TiBasicRuntime
 {
-    struct Radix100
+    public struct Radix100
     {
         // Radix 100 is laid out like this
         //      7   6   5   4   3   2   1
@@ -97,7 +97,7 @@ namespace TiBasicRuntime
             Radix100 roundUpValue = new Radix100(0);
             if (roundUp)
             {
-                // Create a Radix100 with same input with a 1 in the least significant
+                // Create a Radix100 with same exponent with a 1 in the least significant
                 // digit of the mantissa. This can then be added to our result.
                 ulong r = 0;
                 SetByte(ref r, 7, biasedExponent);
@@ -144,7 +144,7 @@ namespace TiBasicRuntime
 
                 if (expValue < 0 || expValue > 6) return false;
 
-                // else use maks to see if this is an int --
+                // else use masks to see if this is an int --
 
                 // if expValue = 0 then only digit 7 can have a value and this still be an int
                 // if expValue = 1 then only digits 7 and 6 can have a value and this still be an int
@@ -156,6 +156,13 @@ namespace TiBasicRuntime
                 return (mask & val) == 0;
             }
         }
+
+        /// <summary>
+        /// Returns the number of digits in this number. It does not count leading
+        /// or trailing zeros. This is not just the significant digits. It is the
+        /// total number of digits (e.g.  1237637000000 has 13 digits).
+        /// </summary>
+        /// <returns></returns>
         public int GetNumberOfDigits()
         {
             // Each byte is one Radix 100 digit and can therefore
@@ -202,11 +209,6 @@ namespace TiBasicRuntime
         }
 
         #endregion
-
-        //private byte GetByte(int index)
-        //{
-        //    return (byte) ((val & digitMasks[index]) >> (index * 8));
-        //}
 
 
 
@@ -264,39 +266,240 @@ namespace TiBasicRuntime
 
         #region String Processing
 
-        const string normalDecimalFormat = " ##########.##########;-##########.##########;0";
-        const string scientificFormatString = " 0.#####E+00;-0.#####E+00";
+        /// <summary>
+        /// Converts the specified double to an instance of Radix100 and then converts
+        /// that to a string.
+        /// </summary>
+        /// <param name="d"></param>
+        /// <returns></returns>
+        public static string ToString(double d)
+        {
+            return ((Radix100)d).ToString();
+        }
+
+        const string normalDecimalFormat = " ##########.########## ;-##########.########## ;0 ";
+        const string scientificFormatString = " 0.#####E+00 ;-0.#####E+00 ";
         public override string ToString()
         {
             int numDigits = GetNumberOfDigits();
-            if (numDigits <= 10) return ((double)this).ToString(normalDecimalFormat);
-            if (IsInteger)
-            {
-                double d = (double)this;
-                return d.ToString(scientificFormatString);
-            }
+            if (numDigits <= 10) return ToNormalDecimalForm();
+            if (IsInteger) return ToScientificForm();
             else
             {
                 int exponent = GetExponent(this);
                 if (Math.Abs(exponent) >= 50)
                 {
                     double mantissa = GetMantissa10(this);
-                    if (mantissa < 0 && exponent < 0) return String.Format("{0:0.#####}E-**", mantissa);
-                    else if (mantissa < 0) return String.Format("{0:0.#####}E+**", mantissa);
-                    else if (exponent > 0) return String.Format(" {0:0.#####}E+**", mantissa);
-                    else return String.Format(" {0:0.#####}E-**", mantissa);
+                    if (mantissa < 0 && exponent < 0) return String.Format("{0:0.#####}E-** ", mantissa);
+                    else if (mantissa < 0) return String.Format("{0:0.#####}E+** ", mantissa);
+                    else if (exponent > 0) return String.Format(" {0:0.#####}E+** ", mantissa);
+                    else return String.Format(" {0:0.#####}E-** ", mantissa);
                 }
-                if (exponent < -4 || exponent > 5) return ((double)this).ToString(scientificFormatString);
-                if (Radix100.Sign(this) >= 0) return String.Format(" {0:G10}", ((double)this));
-                return String.Format("{0:G10}", ((double)this));
+                if (exponent < -4 || exponent > 5) return ToScientificForm();
+                return ToNormalDecimalForm();
                 
             }
+        }
+
+        public string ToScientificForm()
+        {
+            StringBuilder bldr = new StringBuilder();
+            if (Math.Sign(this) >= 0) bldr.Append(" ");
+            else bldr.Append("-");
+
+            Radix100 rounded = Radix100.Round(this, 6);
+            sbyte exponent = GetExponent(this);
+            int decimalExponent = exponent * 2;
+            string stringFormat = "##";
+
+            ulong rawBytes = rounded.val & 0x00FFFFFFFFFFFFFF;
+            ulong integerPart;
+            ulong fractionalPart;
+
+            integerPart = (rawBytes & (~isIntMasks[0])) << 8;
+            fractionalPart = (rawBytes & (isIntMasks[0])) << 16;
+
+            // format integer part
+            if (integerPart != 0)
+            {
+                byte theByte = GetByte(integerPart, 7);
+                if (theByte > 9)
+                {
+                    bldr.Append(theByte / 10);
+                    bldr.Append(".");
+                    bldr.Append(theByte % 10);
+                    decimalExponent++;
+                }
+                else
+                {
+                    bldr.Append(theByte.ToString(stringFormat));
+                    bldr.Append(".");
+                }
+            }
+
+            // format fractional part
+            if (fractionalPart != 0)
+            {
+                stringFormat = "00";
+                int firstNonZeroByte = 0;
+                for (int i = 0; i < 8; i++)
+                {
+                    if (GetByte(fractionalPart, i) != 0)
+                    {
+                        firstNonZeroByte = i;
+                        break;
+                    }
+                }
+                for (int i = 7; i > firstNonZeroByte; i--)
+                {
+                    bldr.Append(GetByte(fractionalPart, i).ToString(stringFormat));
+                }
+                int lastByte = GetByte(fractionalPart, firstNonZeroByte);
+                int firstDigit = lastByte / 10;
+                int secondDigit = lastByte % 10;
+                bldr.Append(firstDigit);
+                bldr.Append(secondDigit.ToString("#")); // if it is zero it won't print.
+            }
+
+            bldr.Append("E");
+            bldr.Append(decimalExponent.ToString("+00;-00"));
+            bldr.Append(" ");
+            return bldr.ToString();
+
+        }
+
+        public string ToNormalDecimalForm()
+        {
+            StringBuilder bldr = new StringBuilder();
+            if (Math.Sign(this) >= 0) bldr.Append(" ");
+            else bldr.Append("-");
+
+            Radix100 rounded = Radix100.Round(this, 10);
+            bool isInteger = IsInteger;
+
+            sbyte exponent = GetExponent(this);
+            string stringFormat = "##";
+
+            ulong rawBytes = rounded.val & 0x00FFFFFFFFFFFFFF;
+            ulong integerPart;
+            ulong fractionalPart;
+            if (exponent < 0)
+            {
+                integerPart = 0;
+                fractionalPart = rawBytes << 8;
+            }
+            else
+            {
+                integerPart = (rawBytes & (~isIntMasks[exponent])) << 8;
+                fractionalPart = (rawBytes & (isIntMasks[exponent])) << ((exponent + 2) * 8);
+            }
+
+            // format integer part
+            if (integerPart != 0)
+            {
+                for (int i = 7; i >= (7 - exponent); i--)
+                {
+                    byte theByte = GetByte(integerPart, i);
+                    bldr.Append(theByte.ToString(stringFormat));
+                    if (theByte > 0) stringFormat = "00"; // print all the digits of the rest of the values
+                }
+            }
+
+            if (!IsInteger) bldr.Append(".");
+            if (exponent < 0)
+            {
+                for (int i = 0; i > exponent+1; i--) bldr.Append("00");
+            }
+
+            // format fractional part
+            if (fractionalPart != 0)
+            {
+                stringFormat = "00";
+                int firstNonZeroByte = 0;
+                for (int i = 0; i < 8; i++)
+                {
+                    if (GetByte(fractionalPart, i) != 0)
+                    {
+                        firstNonZeroByte = i;
+                        break;
+                    }
+                }
+                for (int i = 7; i > firstNonZeroByte; i--)
+                {
+                    bldr.Append(GetByte(fractionalPart, i).ToString(stringFormat));
+                }
+                int lastByte = GetByte(fractionalPart, firstNonZeroByte);
+                int firstDigit = lastByte / 10;
+                int secondDigit = lastByte % 10;
+                bldr.Append(firstDigit);
+                bldr.Append(secondDigit.ToString("#")); // if it is zero it won't print.
+            }
+            bldr.Append(" ");
+            return bldr.ToString();
+
         }
 
         #endregion String Processing
 
         #region Math Operations
-        
+        public static Radix100 Round(Radix100 r, int numOfDecimalDigits)
+        {
+            // We need to find the byte that controls rounding. This depends
+            // on the input - numOfDecimalDigits, and also on the number of
+            // decimal digits in the most significant Radix100 digit of r.
+
+            int numOfDigitsInMsd = GetByte(r.val, 6) > 10 ? 2 : 1;
+
+            // This "normalizes" the digit we are looking for, If the most
+            // significant Radix100 digit of r had only 1 decimal digit, then it
+            // is like we are looking for the digit numOfDecimalDigits + 1. (This
+            // accounts for the leading 0 digit in the MSD).
+            numOfDecimalDigits = numOfDecimalDigits + (2 - numOfDigitsInMsd);
+
+            // The digit that controls rounding is in the byte we grab here:
+            byte bytePos = (byte) (7 - (numOfDecimalDigits + 2) / 2);
+            byte byteOfConcern = GetByte(r.val, bytePos);
+
+            // Now the digit that controls rounding is either in the 10s position
+            // or 1s position of the byte we just grabbed.
+            bool onesPosition = (numOfDecimalDigits % 2) != 0;
+            byte digitOfConcern =(byte) (onesPosition ? (byteOfConcern % 10) : (byteOfConcern / 10));
+
+            Radix100 roundUpVal = Radix100.Zero;
+            if (digitOfConcern >= 5)
+            {
+                // Create a Radix100 that can be added to the truncted value
+                // we create below to get the rounded value.
+                ulong newVal = 0;
+                SetByte(ref newVal, 7, GetByte(r.val, 7));
+                // If our rounding digit was in onesPosition, then we need to put a
+                // 1 in the tens position. Else put a 1 in the ones position of next higher byte.
+                if (onesPosition) SetByte(ref newVal, bytePos, 10);
+                else SetByte(ref newVal, bytePos + 1, 1);
+                roundUpVal = new Radix100(newVal);
+            }
+
+            // the last decimal digit is in the byte we are going to grab:
+            bytePos = (byte)(7 - (numOfDecimalDigits + 1) / 2);
+            byteOfConcern = GetByte(r.val, bytePos);
+            onesPosition = (numOfDecimalDigits % 2) == 0;
+            digitOfConcern = (byte)(onesPosition ? (byteOfConcern % 10) : (byteOfConcern / 10));
+
+            ulong truncatedValue = 0;
+            for (int i = 7; i > bytePos; i--)
+            {
+                SetByte(ref truncatedValue, i, GetByte(r.val, i));
+            }
+
+            if (onesPosition) SetByte(ref truncatedValue, bytePos, GetByte(r.val, bytePos));
+            else SetByte(ref truncatedValue, bytePos, (byte)(digitOfConcern*10));
+
+            Radix100 result = new Radix100(truncatedValue);
+            return result + roundUpVal;
+
+
+        }
+
         public static int Sign(Radix100 r)
         {
             if (r.Equals(Radix100.Zero)) return 0;
@@ -306,8 +509,12 @@ namespace TiBasicRuntime
 
         public static Radix100 operator +(Radix100 r1, Radix100 r2)
         {
+            if (r1.Equals(Zero)) return r2;
+            if (r2.Equals(Zero)) return r1;
+
             sbyte exp1 = GetExponent(r1);
             sbyte exp2 = GetExponent(r2);
+            sbyte exp = Math.Max(exp1, exp2);
             sbyte diff = (sbyte)(exp1 - exp2);
 
             ulong m1 = GetMantissa100(r1);
@@ -316,23 +523,26 @@ namespace TiBasicRuntime
             if (diff > 0) m2 = m2 >> (diff * 8);
             else m1 = m1 >> (-diff * 8);
 
-            ulong sum = (ulong)(Math.Max(exp1, exp2) + 0x40);
-            for (int i = 6; i >= 0; i--)
+            ulong sum = 0;
+            byte carryOver = 0;
+            for (int i = 0; i < 7; i++)
             {
                 byte b1 = (byte)((m1 & digitMasks[i]) >> (i * 8));
                 byte b2 = (byte)((m2 & digitMasks[i]) >> (i * 8));
-                byte digitSum = (byte)(b1 + b2);
-                sum <<= 8;
+                ulong digitSum = (ulong)(b1 + b2 + carryOver);
                 if (digitSum != 0)
                 {
                     if (digitSum > 99)
                     {
                         digitSum -= 100;
-                        sum += (1 << 8); // a carry over bit.
+                        carryOver = 1;
                     }
-                    sum += digitSum;
+                    else carryOver = 0;
+                    sum += (digitSum << (i * 8));
                 }
             }
+            if (carryOver == 1) exp++;
+            sum += ((ulong)(exp + 0x40)) << exponentShift;
 
             return new Radix100(sum);
 
