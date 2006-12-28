@@ -81,12 +81,15 @@ namespace mbasic.SyntaxTree
 
             gen.MarkLabel(condition);
             comparison.Emit(gen);
-            gen.Emit(OpCodes.Brtrue, start);
+            gen.Emit(OpCodes.Ldc_R8, 0.0);
+            gen.Emit(OpCodes.Ceq);
+            gen.Emit(OpCodes.Brfalse, start);
 
         }
 
         public override void RecordLabels(ILGenerator gen)
         {
+            base.RecordLabels(gen);
             init.RecordLabels(gen);
             update.RecordLabels(gen);
             stmt.RecordLabels(gen);

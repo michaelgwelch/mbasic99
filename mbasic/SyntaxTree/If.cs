@@ -61,7 +61,8 @@ namespace mbasic.SyntaxTree
             MarkSequencePoint(gen);
             Label falseCase = gen.DefineLabel();
             conditional.Emit(gen);
-            gen.Emit(OpCodes.Brfalse_S, falseCase);
+            gen.Emit(OpCodes.Ldc_R8, 0.0);
+            gen.Emit(OpCodes.Beq_S, falseCase);
             jmp.Emit(gen, true);
             gen.MarkLabel(falseCase);
             if (elseJmp != null) elseJmp.Emit(gen, true);
