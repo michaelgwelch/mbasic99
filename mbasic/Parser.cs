@@ -378,7 +378,9 @@ namespace mbasic
                 case Token.Minus:
                     return UnaryMinus();
                 default: 
-                    throw new Exception("No Factor detected");
+                    throw new Exception(
+                        String.Format("No Factor detected label {0}, column {1}",
+                        lexer.LineId.Label, lexer.Column));
             }
         }
 
