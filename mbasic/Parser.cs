@@ -55,7 +55,8 @@ namespace mbasic
             if (lookahead == Token.EOF && t == Token.EndOfLine) return;
 
             if (lookahead == t) lookahead = lexer.Next();
-            else throw new Exception(String.Format("Parsing exception on label {0}", lexer.LineId.Label));
+            else throw new Exception(String.Format("Parsing exception on label {0}, column {1}"
+                , lexer.LineId.Label, lexer.Column));
         }
 
         private Statement Statement()
