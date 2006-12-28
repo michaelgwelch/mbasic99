@@ -33,10 +33,12 @@ namespace mbasic
     internal class Parser
     {
         public Lexer lexer;
+        List<object> data;
         Token lookahead;
-        public Parser(Stream stream, SymbolTable symbols)
+        public Parser(Stream stream, SymbolTable symbols, List<object> data)
         {
             lexer = new Lexer(stream, symbols);
+            this.data = data;
         }
 
         public Statement Parse()
@@ -91,10 +93,38 @@ namespace mbasic
                 case Token.End:
                     retVal = EndStatement();
                     break;
+                case Token.Data:
+                    retVal = DataStatement();
+                    break;
+                case Token.Read:
+                    retVal = ReadStatement();
+                    break;
 
             }
             Match(Token.EndOfLine);
             return retVal;
+        }
+
+        private Statement ReadStatement()
+        {
+            Match(Token.Read);
+            LineId line = lexer.LineId;
+            List<int> indexes = new List<int>();
+            while (lookahead != Token.EOF && lookahead != Token.EndOfLine)
+            {
+                indexes.Add(lexer.SymbolIndex); // The variable to read into.
+                Match(Token.Variable);
+                if (lookahead == Token.Comma) Match(Token.Comma);
+            }
+            Read read = new Read(indexes.ToArray(), line);
+            return read;
+        }
+
+        private Statement DataStatement()
+        {
+            Match(Token.Data);
+            data.AddRange(DataList());
+            return Data.Instance;
         }
 
         private Statement EndStatement()
@@ -329,6 +359,34 @@ namespace mbasic
                 default: 
                     throw new Exception("No Factor detected");
             }
+        }
+
+        object[] DataList()
+        {
+            if (lookahead == Token.EndOfLine || lookahead == Token.EOF) return new object[0];
+            List<object> items = new List<object>();
+            while (lookahead != Token.EndOfLine && lookahead != Token.EOF)
+            {
+                switch(lookahead)
+                {
+                    case Token.Number:
+                        items.Add(lexer.NumericValue);
+                        Match(Token.Number);
+                        break;
+                    case Token.String:
+                        items.Add(lexer.Value);
+                        Match(Token.String);
+                        break;
+                    case Token.Comma:
+                        items.Add(String.Empty);
+                        break;
+                    default:
+                        throw new Exception(String.Format(
+                            "DATA ERROR ON {0}", lexer.LineId.Label));
+                }
+                if (lookahead == Token.Comma) Match(Token.Comma);
+            }
+            return items.ToArray();
         }
 
         Expression[] ArgList()

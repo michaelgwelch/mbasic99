@@ -37,6 +37,7 @@ internal enum Token
     Semicolon   = ';',
     And         = 256,
     Call,
+    Data,
     Else,
     End, // used for keywords END and STOP
     EndOfLine,
@@ -58,6 +59,7 @@ internal enum Token
     Or,
     Print,
     Randomize,
+    Read,
     Remark, // technically not a token, and should never be returned. Used internally by lexer only.
     String,
     Subroutine,

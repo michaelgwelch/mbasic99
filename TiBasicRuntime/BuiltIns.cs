@@ -181,7 +181,13 @@ namespace TiBasicRuntime
                 if (o is string)
                 {
                     s = o as string;
-                    if (s.Length == 0) continue;
+                    // handle zero length strings first.
+                    if (s.Length == 0)
+                    {
+                        printSepInEffect = false;
+                        continue;
+                    }
+
                     char ch = s[0];
                     switch (ch)
                     {
@@ -282,5 +288,45 @@ namespace TiBasicRuntime
         private static void ResetColumnPos() { printCol = 1; }
         private static int RemainingPrintColumns { get { return 28 - printCol + 1; } }
 
+
+        private static List<object> data = new List<object>();
+        private static int pos = 0;
+        public static void AddData(params object[] objects)
+        {
+            data.AddRange(objects);
+        }
+
+        public static void ReadDouble(out double d)
+        {
+            object o = data[pos];
+            if (o is double)
+            {
+                d = (double)o;
+                pos++;
+            }
+            else
+            {
+                throw new Exception("DATA ERROR");
+            }
+        }
+
+        public static void ReadString(out string s)
+        {
+            object o = data[pos];
+            if (o is string)
+            {
+                s = (string)o;
+            }
+            else
+            {
+                s = Radix100.ToString((double)o);
+            }
+            pos++;
+        }
+
+        public static void Restore()
+        {
+            pos = 0;
+        }
     }
 }

@@ -32,6 +32,7 @@ using System.Diagnostics;
 namespace mbasic
 {
     using LabelList = System.Collections.Generic.SortedList<string, Label>;
+    using TiBasicRuntime;
 
     class Program
     {
@@ -48,7 +49,8 @@ namespace mbasic
             Stream stream = File.OpenRead(fileName);
             SymbolTable symbols = new SymbolTable();
             InitializeReservedWords(symbols);
-            Parser parser = new Parser(stream, symbols);
+            List<object> data = new List<object>(); // a list used to contain all the statid DATA data.
+            Parser parser = new Parser(stream, symbols, data);
             Node.lexer = parser.lexer;
 
             Statement n = parser.Parse();
@@ -69,7 +71,7 @@ namespace mbasic
             }
             ModuleBuilder mbldr = bldr.DefineDynamicModule(moduleName, exeName, debug);
 
-            TypeBuilder typeBuilder = mbldr.DefineType("TiBasic.Program", TypeAttributes.BeforeFieldInit 
+            TypeBuilder typeBuilder = mbldr.DefineType(assemblyName + ".Program", TypeAttributes.BeforeFieldInit 
                 | TypeAttributes.Sealed | TypeAttributes.AnsiClass | TypeAttributes.Abstract);
 
 
@@ -97,6 +99,33 @@ namespace mbasic
 
             n.CheckTypes();
             n.RecordLabels(gen);
+
+            #region Create Static DATA data
+            if (data.Count > 0)
+            {
+                MethodInfo addDataMethod = typeof(BuiltIns).GetMethod("AddData");
+                gen.Emit(OpCodes.Ldc_I4, data.Count);
+                gen.Emit(OpCodes.Newarr, typeof(object));
+
+                for (int i = 0; i < data.Count; i++)
+                {
+                    gen.Emit(OpCodes.Dup); // duplicate array reference, it will be consumed on store element
+                    gen.Emit(OpCodes.Ldc_I4, i);
+                    object o = data[i];
+                    if (o is string) gen.Emit(OpCodes.Ldstr, (string)o);
+                    else
+                    {
+                        double d = (double)o;
+                        gen.Emit(OpCodes.Ldc_R8, d);
+                        gen.Emit(OpCodes.Box, typeof(double));
+                    }
+                    gen.Emit(OpCodes.Stelem_Ref);
+                }
+
+                gen.Emit(OpCodes.Call, addDataMethod);
+            }
+            #endregion
+
             // Emit try
             Label end = gen.BeginExceptionBlock();
             Node.endLabel = end;
@@ -146,6 +175,8 @@ namespace mbasic
             symbols.ReserveWord("END", Token.End);
             symbols.ReserveWord("STOP", Token.End);
             symbols.ReserveWord("TAB", Token.Tab);
+            symbols.ReserveWord("DATA", Token.Data);
+            symbols.ReserveWord("READ", Token.Read);
 
             // String Functionis
             symbols.ReserveWord("ASC", Token.Function);

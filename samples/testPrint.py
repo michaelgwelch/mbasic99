@@ -69,4 +69,8 @@ assertEquals("     326 ")
 assertEquals("      79 ")
 assertEquals(" 326           79 ")
 
+
+# Other tests
+assertEquals(" 75 ");
+assertEquals("HELLO");
 Console.WriteLine("done")

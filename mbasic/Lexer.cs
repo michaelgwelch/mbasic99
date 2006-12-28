@@ -37,6 +37,7 @@ namespace mbasic
         bool startOfLine;
         int index;
         string label;
+        bool readingData = false; // Unfortunately the grammar for BASIC is not a context free grammar, for example normally something like 'H' would be considered a variable, but after a DATA it is a string.
 
         public Lexer(Stream stream, SymbolTable symbols)
         {
@@ -76,6 +77,7 @@ namespace mbasic
                     else
                     {
                         startOfLine = true;
+                        readingData = false;
                         return Token.EndOfLine;
                     }
                 }
@@ -95,52 +97,63 @@ namespace mbasic
 
                 if (startOfLine) return Token.Error;
 
-                if (Char.IsDigit(ch) || ch == '.') return NextNumber();
-
-                if (Char.IsLetter(ch))
+                if (readingData) // special case, only happen if we have read Token.Data
                 {
-                    Token word = NextWord(); // keywords and variables, and remarks
-                    if (word != Token.Remark) return word;
-                    // Reset us back to start of line
-                    startOfLine = true; // after reading a REM we are now at start of line.
-                    continue;
+                    if (Char.IsLetter(ch)) return NextString(false);
+                    else if (Char.IsDigit(ch)) return NextNumber();
+                    else if (ch == '\"') return NextString();
+                    else if (ch == ',') { reader.Advance(); return Token.Comma; }
+                    else throw new Exception("Unexpected char" + ch.ToString());
                 }
-
-                if (ch == '\"') return NextString();
-
-
-                if (ch == '<')
+                else
                 {
-                    ch = reader.Read();
-                    if (ch == '>')
+                    if (Char.IsDigit(ch) || ch == '.') return NextNumber();
+
+                    if (Char.IsLetter(ch))
                     {
-                        reader.Advance();
-                        return Token.NotEquals;
+                        Token word = NextWord(); // keywords and variables, and remarks
+                        if (word == Token.Data) readingData = true;
+                        if (word != Token.Remark) return word;
+                        // Reset us back to start of line
+                        startOfLine = true; // after reading a REM we are now at start of line.
+                        continue;
                     }
-                    else return Token.LessThan;
-                }
 
-                switch (ch)
-                {
-                    case ',':
-                    case '*':
-                    case '/':
-                    case '+':
-                    case '-':
-                    case '>':
-                    case '=':
-                    case '&':
-                    case '^':
-                    case '(':
-                    case ')':
-                    case ';':
-                    case ':':
-                        reader.Advance();
-                        return (Token) ch;
-                    default:
-                        throw new Exception("Unexpected character: " + ch.ToString());
-                }
+                    if (ch == '\"') return NextString();
 
+
+                    if (ch == '<')
+                    {
+                        ch = reader.Read();
+                        if (ch == '>')
+                        {
+                            reader.Advance();
+                            return Token.NotEquals;
+                        }
+                        else return Token.LessThan;
+                    }
+
+                    switch (ch)
+                    {
+                        case ',':
+                        case '*':
+                        case '/':
+                        case '+':
+                        case '-':
+                        case '>':
+                        case '=':
+                        case '&':
+                        case '^':
+                        case '(':
+                        case ')':
+                        case ';':
+                        case ':':
+                            reader.Advance();
+                            return (Token)ch;
+                        default:
+                            throw new Exception("Unexpected character: " + ch.ToString());
+                    }
+                }
 
 
             }
@@ -256,16 +269,24 @@ namespace mbasic
 
         }
 
-        private Token NextString()
+        private Token NextString(bool quoted)
         {
+            Char endChar = quoted ? '\"' : ',';
             StringBuilder bldr = new StringBuilder();
-            for (char ch = reader.Read(); ch != '\"'; ch = reader.Read())
+            if (!quoted) bldr.Append(reader.Current);
+            for (char ch = reader.Read(); ch != endChar; ch = reader.Read())
             {
                 bldr.Append(ch);
             }
-            reader.Advance(); // to consume the quotation mark
+            if (quoted) reader.Advance(); // to consume the quotation mark
             value = bldr.ToString();
             return Token.String;
+
+        }
+
+        private Token NextString()
+        {
+            return NextString(true);
         }
 
         public LineId LineId { get { return new LineId(reader.LineNumber, label); } }

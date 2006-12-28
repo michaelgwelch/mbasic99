@@ -44,6 +44,7 @@
     <Compile Include="SyntaxTree\BasicType.cs" />
     <Compile Include="SyntaxTree\Block.cs" />
     <Compile Include="SyntaxTree\Concatenate.cs" />
+    <Compile Include="SyntaxTree\Data.cs" />
     <Compile Include="SyntaxTree\Division.cs" />
     <Compile Include="SyntaxTree\End.cs" />
     <Compile Include="SyntaxTree\Equals.cs" />
@@ -62,6 +63,7 @@
     <Compile Include="SyntaxTree\Node.cs" />
     <Compile Include="SyntaxTree\Power.cs" />
     <Compile Include="SyntaxTree\Randomize.cs" />
+    <Compile Include="SyntaxTree\Read.cs" />
     <Compile Include="SyntaxTree\RelationalExpression.cs" />
     <Compile Include="SyntaxTree\Statement.cs" />
     <Compile Include="SyntaxTree\Subroutine.cs" />
@@ -80,6 +82,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\samples\data.mbas">
+      <Link>samples\data.mbas</Link>
+    </None>
     <None Include="..\samples\ForStatementTest.mbas">
       <Link>samples\ForStatementTest.mbas</Link>
     </None>

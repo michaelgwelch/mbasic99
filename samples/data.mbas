@@ -1,0 +1,25 @@
+99 REM Scenarios from page II-63 of User's Reference Guide (DATA statement)
+100 for i = 1 to 5
+110 read a,b
+120 print a;b
+130 next i
+140 data 2,4,6,7,8
+150 data 1,2,3,4,5
+
+200 read A$,B$,C,D
+210 print a$:B$:C:d
+220 data HELLO, "JONES, MARY",28,3.1416
+
+300 read A$,B$,C
+310 data HI,,2
+320 print "A$ IS ";A$
+330 print "B$ IS ";B$
+340 print "C IS ";C
+
+400 REM Some scenarios of my own 
+410 read A$,B$,C$,D
+420 print "A$ IS ";A$;"."
+430 print "B$ IS ";B$;"."
+440 print "C$ IS ";C$;"."
+450 print "D IS ";d;"."
+460 data this is the first string,,,5

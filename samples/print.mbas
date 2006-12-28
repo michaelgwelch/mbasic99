@@ -73,3 +73,9 @@
 1140 PRINT A;TAB(15),B
 1150 PRINT TAB(C2);A;TAB(C2+1);B
 1160 PRINT A;TAB(3+2*20);B
+
+
+2000 REM Scenarios to test problems I've found along the way
+2005 REM The next two lines should print on two different lines.
+2010 PRINT 75;""
+2020 PRINT "HELLO"

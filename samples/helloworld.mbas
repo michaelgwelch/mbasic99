@@ -1,5 +1,15 @@
 50 REM PRINT Statements
+75 data 33, 21.45,  "hell0"
+80 Read X
+81 Read Y
+82 Read Z$
+83 print X;Y;Z$
 
+84 READ X
+85 READ Y
+86 READ Z$
+87 print X;Y;Z$
+88 DATA 19, 22, ""
 100 print -10
 105 print 7.1
 106 print "abcdefghijklmnopqrstuvwxyzabcdefghijk"
