@@ -98,6 +98,9 @@
     <None Include="..\samples\read.mbas">
       <Link>samples\read.mbas</Link>
     </None>
+    <None Include="..\samples\relational.mbas">
+      <Link>samples\relational.mbas</Link>
+    </None>
     <None Include="..\samples\secretnum.mbas">
       <Link>samples\secretnum.mbas</Link>
     </None>
