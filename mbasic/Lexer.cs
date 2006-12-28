@@ -130,7 +130,23 @@ namespace mbasic
                             reader.Advance();
                             return Token.NotEquals;
                         }
+                        else if (ch == '=')
+                        {
+                            reader.Advance();
+                            return Token.LessThanEqual;
+                        }
                         else return Token.LessThan;
+                    }
+
+                    if (ch == '>')
+                    {
+                        ch = reader.Read();
+                        if (ch == '=')
+                        {
+                            reader.Advance();
+                            return Token.GreaterThanEqual;
+                        }
+                        else return Token.GreaterThan;
                     }
 
                     switch (ch)
@@ -140,7 +156,6 @@ namespace mbasic
                         case '/':
                         case '+':
                         case '-':
-                        case '>':
                         case '=':
                         case '&':
                         case '^':
