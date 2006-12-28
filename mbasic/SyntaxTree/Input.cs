@@ -53,12 +53,12 @@ namespace mbasic.SyntaxTree
             Label readLine = gen.DefineLabel();
             MarkSequencePoint(gen);
             gen.MarkLabel(readLine);
-            gen.EmitCall(OpCodes.Call, readLineMethod, new Type[0]);
+            gen.Emit(OpCodes.Call, readLineMethod);
             if (varType == BasicType.Number)
             {
                 // Try to parse it into a double, if not possible give a warning and read again.
                 gen.Emit(OpCodes.Ldloca, (short) index);
-                gen.EmitCall(OpCodes.Call, tryParseMethod, new Type[0]);
+                gen.Emit(OpCodes.Call, tryParseMethod);
                 // if return value is false, the parse failed. go back to read line
                 gen.Emit(OpCodes.Brfalse_S, readLine);
 

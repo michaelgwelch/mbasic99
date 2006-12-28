@@ -56,7 +56,7 @@ namespace mbasic.SyntaxTree
         {
             s1.Emit(gen);
             s2.Emit(gen);
-            gen.EmitCall(OpCodes.Call, concatMethod, new Type[0]);
+            gen.Emit(OpCodes.Call, concatMethod);
         }
     }
 }

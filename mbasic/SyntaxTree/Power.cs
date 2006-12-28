@@ -45,7 +45,7 @@ namespace mbasic.SyntaxTree
             
             op1.Emit(gen);
             op2.Emit(gen);
-            gen.EmitCall(OpCodes.Call, powerMethod, new Type[0]);
+            gen.Emit(OpCodes.Call, powerMethod);
         }
 
 
