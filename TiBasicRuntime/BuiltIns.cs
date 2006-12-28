@@ -244,11 +244,11 @@ namespace TiBasicRuntime
 
         private static void PrintNumber(double d)
         {
-            if (d >= 0) PrintSpace(); // Positive numbers are printed with leading space 
             string s = Radix100.ToString(d);
             if (s.Length > RemainingPrintColumns) PrintNewLine();
+            if (d >= 0) PrintSpace(); // Positive numbers are printed with leading space 
             PrintItem(s);
-            if (printCol < 28) PrintSpace();
+            if (printCol < 29) PrintSpace();
         }
 
         private static void PrintItem(string s)
@@ -288,21 +288,20 @@ namespace TiBasicRuntime
         private static void ResetColumnPos() { printCol = 1; }
         private static int RemainingPrintColumns { get { return 28 - printCol + 1; } }
 
-
-        private static List<object> data = new List<object>();
+        private static SortedList<string, object[]> data = new SortedList<string, object[]>();
+        private static int labelIndex = 0;
         private static int pos = 0;
-        public static void AddData(params object[] objects)
+        public static void AddData(string label, params object[] objects)
         {
-            data.AddRange(objects);
+            data.Add(label, objects);
         }
 
         public static void ReadDouble(out double d)
         {
-            object o = data[pos];
+            object o = Read();
             if (o is double)
             {
                 d = (double)o;
-                pos++;
             }
             else
             {
@@ -312,7 +311,7 @@ namespace TiBasicRuntime
 
         public static void ReadString(out string s)
         {
-            object o = data[pos];
+            object o = Read();
             if (o is string)
             {
                 s = (string)o;
@@ -321,11 +320,35 @@ namespace TiBasicRuntime
             {
                 s = Radix100.ToString((double)o);
             }
-            pos++;
         }
 
-        public static void Restore()
+        private static object Read()
         {
+            if (labelIndex == data.Count) throw new Exception("DATA ERROR");
+            object[] dataList = data.Values[labelIndex];
+
+            if (pos == dataList.Length) throw new Exception("DATA ERROR");
+            object o = dataList[pos];
+
+            pos++;
+            if (pos == dataList.Length)
+            {
+                labelIndex++;
+                pos = 0;
+            }
+            return o;
+        }
+
+        public static void RestoreToBeginning()
+        {
+            labelIndex = 0;
+            pos = 0;
+        }
+
+        public static void RestoreToLabel(string label)
+        {
+            // TODO: What if labelIndex is not found? Need to throw data error
+            labelIndex = data.IndexOfKey(label);
             pos = 0;
         }
     }

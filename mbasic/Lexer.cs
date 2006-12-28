@@ -273,12 +273,26 @@ namespace mbasic
         {
             Char endChar = quoted ? '\"' : ',';
             StringBuilder bldr = new StringBuilder();
-            if (!quoted) bldr.Append(reader.Current);
-            for (char ch = reader.Read(); ch != endChar; ch = reader.Read())
+            if (!quoted) bldr.Append(reader.Current); // If not quoted then append current char, otherwise skip it
+
+
+            do
             {
-                bldr.Append(ch);
-            }
-            if (quoted) reader.Advance(); // to consume the quotation mark
+                for (char ch = reader.Read(); ch != endChar; ch = reader.Read())
+                {
+                    bldr.Append(ch);
+                }
+
+                if (quoted) reader.Advance(); // to consume the quotation mark
+
+                // if the next character is a quote then we haven't reached the end of
+                // the string. We just read a double quote "" in the string which
+                // should be replaced with a "
+
+                if (reader.Current == '\"') bldr.Append('\"');
+                
+            } while (quoted && reader.Current == '\"');
+
             value = bldr.ToString();
             return Token.String;
 

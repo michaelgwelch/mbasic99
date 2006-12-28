@@ -65,6 +65,7 @@
     <Compile Include="SyntaxTree\Randomize.cs" />
     <Compile Include="SyntaxTree\Read.cs" />
     <Compile Include="SyntaxTree\RelationalExpression.cs" />
+    <Compile Include="SyntaxTree\Restore.cs" />
     <Compile Include="SyntaxTree\Statement.cs" />
     <Compile Include="SyntaxTree\Subroutine.cs" />
     <Compile Include="SyntaxTree\Subtract.cs" />
@@ -93,6 +94,9 @@
     </None>
     <None Include="..\samples\print.mbas">
       <Link>samples\print.mbas</Link>
+    </None>
+    <None Include="..\samples\read.mbas">
+      <Link>samples\read.mbas</Link>
     </None>
     <None Include="..\samples\secretnum.mbas">
       <Link>samples\secretnum.mbas</Link>

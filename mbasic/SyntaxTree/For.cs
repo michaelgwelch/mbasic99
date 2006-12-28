@@ -36,8 +36,8 @@ namespace mbasic.SyntaxTree
         Expression comparison;
         Statement stmt;
 
-        public For(Assign init, Expression comparison, Assign update, Statement stmt)
-            : base(LineId.None)
+        public For(Assign init, Expression comparison, Assign update, Statement stmt, LineId line)
+            : base(line)
         {
             this.init = init;
             this.comparison = comparison;
@@ -77,7 +77,7 @@ namespace mbasic.SyntaxTree
             stmt.Emit(gen);
 
             // Update counter
-            update.Emit(gen, false);
+            update.Emit(gen);
 
             gen.MarkLabel(condition);
             comparison.Emit(gen);

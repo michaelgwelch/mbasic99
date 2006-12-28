@@ -61,6 +61,7 @@ internal enum Token
     Randomize,
     Read,
     Remark, // technically not a token, and should never be returned. Used internally by lexer only.
+    Restore,
     String,
     Subroutine,
     Tab,

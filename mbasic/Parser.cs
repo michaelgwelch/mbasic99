@@ -33,9 +33,9 @@ namespace mbasic
     internal class Parser
     {
         public Lexer lexer;
-        List<object> data;
+        SortedList<string, object[]> data;
         Token lookahead;
-        public Parser(Stream stream, SymbolTable symbols, List<object> data)
+        public Parser(Stream stream, SymbolTable symbols, SortedList<string, object[]> data)
         {
             lexer = new Lexer(stream, symbols);
             this.data = data;
@@ -99,10 +99,30 @@ namespace mbasic
                 case Token.Read:
                     retVal = ReadStatement();
                     break;
+                case Token.Restore:
+                    retVal = RestoreStatement();
+                    break;
 
             }
             Match(Token.EndOfLine);
             return retVal;
+        }
+
+        private Statement RestoreStatement()
+        {
+            LineId line = lexer.LineId;
+            Restore restore;
+            Match(Token.Restore);
+            if (lookahead == Token.Number)
+            {
+                restore = new Restore(lexer.Value, line);
+                Match(Token.Number);
+            }
+            else
+            {
+                restore = new Restore(line);
+            }
+            return restore;
         }
 
         private Statement ReadStatement()
@@ -123,7 +143,8 @@ namespace mbasic
         private Statement DataStatement()
         {
             Match(Token.Data);
-            data.AddRange(DataList());
+            KeyValuePair<string, object[]> list = DataList();
+            data.Add(list.Key, list.Value);
             return Data.Instance;
         }
 
@@ -361,9 +382,13 @@ namespace mbasic
             }
         }
 
-        object[] DataList()
+        
+        KeyValuePair<string, object[]> DataList()
         {
-            if (lookahead == Token.EndOfLine || lookahead == Token.EOF) return new object[0];
+            string label = lexer.LineId.Label;
+
+            if (lookahead == Token.EndOfLine || lookahead == Token.EOF)
+                new KeyValuePair<string, object[]>(label, new object[0]);
             List<object> items = new List<object>();
             while (lookahead != Token.EndOfLine && lookahead != Token.EOF)
             {
@@ -386,7 +411,7 @@ namespace mbasic
                 }
                 if (lookahead == Token.Comma) Match(Token.Comma);
             }
-            return items.ToArray();
+            return new KeyValuePair<string,object[]>(label, items.ToArray());
         }
 
         Expression[] ArgList()
@@ -510,6 +535,12 @@ namespace mbasic
                     list.Add(new StringLiteral("\t", lexer.LineId));
                     Match(Token.Comma);
                     break;
+                case Token.EndOfLine:
+                case Token.EOF:
+                    return new Expression[0];
+                default:
+                    throw new Exception(String.Format(
+                        "Missing print seperator on {0}", lexer.LineId.Label));
             }
             list.AddRange(PrintList());
             return list.ToArray();
@@ -522,33 +553,33 @@ namespace mbasic
 
         private Statement ForStatement()
         {
-            LineId line = lexer.LineId;
+            LineId line = lexer.LineId; // This is the line that the FOR key word is used on
             Match(Token.For);
 
             int index = lexer.SymbolIndex;
-            Match(Token.Variable);
+            Match(Token.Variable);      // This is the counting variable 
 
             Match(Token.Equals);
 
-            Expression startVal = Expression();
+            Expression startVal = Expression(); // This is the starting value
 
             Match(Token.To);
 
-            Expression endVal = Expression();
+            Expression endVal = Expression(); // this is the ending value
 
             Match(Token.EndOfLine);
 
             LineId blockStart = lexer.LineId;
             Block block = Block(Token.Next);
 
-            LineId endLine = lexer.LineId;
+            LineId endLine = lexer.LineId;  // This is the line that the NEXT keyword is used on
             Match(Token.Next);
             Match(Token.Variable);
 
             Assign init = new Assign(index, startVal, line);
             Assign update = new Assign(index, new Increment(index, endLine), endLine);
             Expression comparison = RelationalExpression.CompareLessThanEquals(new VariableReference(index, line), endVal, line);
-            return new For(init, comparison, update, block);
+            return new For(init, comparison, update, block, line);
         }
 
         public Block Block(Token endToken)

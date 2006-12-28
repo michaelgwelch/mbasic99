@@ -49,7 +49,7 @@ namespace mbasic
             Stream stream = File.OpenRead(fileName);
             SymbolTable symbols = new SymbolTable();
             InitializeReservedWords(symbols);
-            List<object> data = new List<object>(); // a list used to contain all the statid DATA data.
+            SortedList<string, object[]> data = new SortedList<string, object[]>(); // a list used to contain all the statid DATA data.
             Parser parser = new Parser(stream, symbols, data);
             Node.lexer = parser.lexer;
 
@@ -104,25 +104,33 @@ namespace mbasic
             if (data.Count > 0)
             {
                 MethodInfo addDataMethod = typeof(BuiltIns).GetMethod("AddData");
-                gen.Emit(OpCodes.Ldc_I4, data.Count);
-                gen.Emit(OpCodes.Newarr, typeof(object));
 
-                for (int i = 0; i < data.Count; i++)
+                for (int labelIndex = 0; labelIndex < data.Count; labelIndex++)
                 {
-                    gen.Emit(OpCodes.Dup); // duplicate array reference, it will be consumed on store element
-                    gen.Emit(OpCodes.Ldc_I4, i);
-                    object o = data[i];
-                    if (o is string) gen.Emit(OpCodes.Ldstr, (string)o);
-                    else
-                    {
-                        double d = (double)o;
-                        gen.Emit(OpCodes.Ldc_R8, d);
-                        gen.Emit(OpCodes.Box, typeof(double));
-                    }
-                    gen.Emit(OpCodes.Stelem_Ref);
-                }
+                    object[] dataList = data.Values[labelIndex];
+                    string label = data.Keys[labelIndex];
 
-                gen.Emit(OpCodes.Call, addDataMethod);
+                    gen.Emit(OpCodes.Ldstr, label);
+                    gen.Emit(OpCodes.Ldc_I4, dataList.Length);
+                    gen.Emit(OpCodes.Newarr, typeof(object));
+
+                    for (int i = 0; i < dataList.Length; i++)
+                    {
+                        gen.Emit(OpCodes.Dup); // duplicate array reference, it will be consumed on store element
+                        gen.Emit(OpCodes.Ldc_I4, i);
+                        object o = dataList[i];
+                        if (o is string) gen.Emit(OpCodes.Ldstr, (string)o);
+                        else
+                        {
+                            double d = (double)o;
+                            gen.Emit(OpCodes.Ldc_R8, d);
+                            gen.Emit(OpCodes.Box, typeof(double));
+                        }
+                        gen.Emit(OpCodes.Stelem_Ref);
+                    }
+
+                    gen.Emit(OpCodes.Call, addDataMethod);
+                }
             }
             #endregion
 
@@ -177,6 +185,7 @@ namespace mbasic
             symbols.ReserveWord("TAB", Token.Tab);
             symbols.ReserveWord("DATA", Token.Data);
             symbols.ReserveWord("READ", Token.Read);
+            symbols.ReserveWord("RESTORE", Token.Restore);
 
             // String Functionis
             symbols.ReserveWord("ASC", Token.Function);

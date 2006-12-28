@@ -79,3 +79,6 @@
 2005 REM The next two lines should print on two different lines.
 2010 PRINT 75;""
 2020 PRINT "HELLO"
+
+2100 PRINT "TO PRINT ""QUOTE MARKS"" YOU MUST USE DOUBLE QUOTES."
+

@@ -73,4 +73,6 @@ assertEquals(" 326           79 ")
 # Other tests
 assertEquals(" 75 ");
 assertEquals("HELLO");
+assertEquals("TO PRINT \"QUOTE MARKS\" YOU M")
+assertEquals("UST USE DOUBLE QUOTES.")
 Console.WriteLine("done")

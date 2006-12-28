@@ -30,6 +30,7 @@ namespace mbasic.SyntaxTree
     abstract class Statement : Node
     {
         Label lineLabel;        // A .NET label used to mark this location.
+        bool lineLabelAssigned = false;
 
         protected Statement(LineId line) : base(line)
         {
@@ -37,8 +38,9 @@ namespace mbasic.SyntaxTree
         public abstract void CheckTypes();
         public virtual void RecordLabels(ILGenerator gen)
         {
-            if (labels.ContainsKey(line.Label)) return;
+            if (labels.ContainsKey(line.Label) || line.Label == String.Empty) return;
             this.lineLabel = gen.DefineLabel();
+            this.lineLabelAssigned = true;
 
             labels.Add(line.Label, lineLabel);
         }
@@ -55,7 +57,8 @@ namespace mbasic.SyntaxTree
 
         public void MarkLabel(ILGenerator gen)
         {
-            gen.MarkLabel(lineLabel);
+            if (lineLabelAssigned)
+                gen.MarkLabel(lineLabel);
         }
 
         public abstract void Emit(ILGenerator gen, bool labelSetAlready);
