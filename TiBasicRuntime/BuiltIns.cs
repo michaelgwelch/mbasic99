@@ -45,9 +45,12 @@ namespace TiBasicRuntime
             rand = new Random();
         }
 
-        public static void RandomizeWithSeed(int seed)
+        public static void RandomizeWithSeed(double seed)
         {
-            rand = new Random(seed);
+            if (seed > Int32.MaxValue) seed = Int32.MaxValue;
+            if (seed < Int32.MinValue) seed = Int32.MinValue;
+            int intSeed = Convert.ToInt32(seed);
+            rand = new Random(intSeed);
         }
 
         public static double Rnd()

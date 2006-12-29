@@ -36,7 +36,8 @@ namespace mbasic.SyntaxTree
         private static readonly MethodInfo randomizeWithSeed =
             builtinsType.GetMethod("RandomizeWithSeed");
 
-        int seedValue;
+        Expression seedExpression;
+        BasicType exprType;
         bool seedSpecified;
 
         public Randomize(LineId line) : base(line) 
@@ -44,16 +45,18 @@ namespace mbasic.SyntaxTree
             seedSpecified = false;
         }
 
-        public Randomize(int seedValue, LineId line)
+        public Randomize(Expression seedExpression, LineId line)
             : base(line)
         {
-            this.seedValue = seedValue;
+            this.seedExpression = seedExpression;
             seedSpecified = true;
         }
 
         public override void CheckTypes()
         {
-            // nothing to do
+            exprType = seedExpression.GetBasicType();
+            if (exprType == BasicType.Number || exprType == BasicType.Boolean) return;
+            throw new Exception("Type error");
         }
 
         public override void Emit(ILGenerator gen)
@@ -67,7 +70,9 @@ namespace mbasic.SyntaxTree
             MarkSequencePoint(gen);
             if (seedSpecified)
             {
-                gen.Emit(OpCodes.Ldc_I4, seedValue);
+                seedExpression.Emit(gen);
+                if (exprType == BasicType.Boolean) EmitConvertToDouble(gen);
+
                 gen.Emit(OpCodes.Call, randomizeWithSeed);
             }
             else

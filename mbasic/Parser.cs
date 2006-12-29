@@ -170,14 +170,10 @@ namespace mbasic
         {
             LineId line = lexer.LineId;
             Match(Token.Randomize);
-            if (lookahead == Token.Number)
-            {
-                double seedValue = lexer.NumericValue;
-                Match(Token.Number);
-                return new Randomize(Convert.ToInt32(Math.Floor(seedValue)), 
-                    line);
-            }
-            return new Randomize(line);
+
+            if (lookahead == Token.EndOfLine || lookahead == Token.EOF) return new Randomize(line);
+
+            else return new Randomize(Expression(), line);
         }
 
         private Statement IfStatement()
