@@ -96,58 +96,58 @@ namespace mbasic.SyntaxTree
                     EmitFunctionCall(gen, rndMethod);
                     break;
                 case "INT":
-                    EmitFunctionCall(gen, intMethod, exprs[0]);
+                    EmitFunctionCall(gen, intMethod);
                     break;
                 case "ASC":
-                    EmitFunctionCall(gen, ascMethod, line.Label, exprs[0]);
+                    EmitFunctionCall(gen, ascMethod, line.Label);
                     break;
                 case "CHR$":
-                    EmitFunctionCall(gen, chrMethod, line.Label, exprs[0]);
+                    EmitFunctionCall(gen, chrMethod, line.Label);
                     break;
                 case "LEN":
-                    EmitFunctionCall(gen, lenMethod, exprs[0]);
+                    EmitFunctionCall(gen, lenMethod);
                     break;
                 case "POS":
-                    EmitFunctionCall(gen, posMethod, line.Label, exprs[0], exprs[1], exprs[2]);
+                    EmitFunctionCall(gen, posMethod, line.Label);
                     break;
                 case "SEG$":
-                    EmitFunctionCall(gen, segMethod, line.Label, exprs[0], exprs[1], exprs[2]);
+                    EmitFunctionCall(gen, segMethod, line.Label);
                     break;
                 case "STR$":
-                    EmitFunctionCall(gen, strMethod, exprs[0]);
+                    EmitFunctionCall(gen, strMethod);
                     break;
                 case "VAL":
-                    EmitFunctionCall(gen, valMethod, line.Label, exprs[0]);
+                    EmitFunctionCall(gen, valMethod, line.Label);
                     break;
 
                     // Numeric Functions
                 case "ABS":
-                    EmitFunctionCall(gen, absMethod, exprs[0]);
+                    EmitFunctionCall(gen, absMethod);
                     break;
                 case "ATN":
-                    EmitFunctionCall(gen, atnMethod, exprs[0]);
+                    EmitFunctionCall(gen, atnMethod);
                     break;
                 case "COS":
-                    EmitFunctionCall(gen, cosMethod, exprs[0]);
+                    EmitFunctionCall(gen, cosMethod);
                     break;
                 case "EXP":
-                    EmitFunctionCall(gen, expMethod, exprs[0]);
+                    EmitFunctionCall(gen, expMethod);
                     break;
                 case "LOG":
-                    EmitFunctionCall(gen, logMethod, line.Label, exprs[0]);
+                    EmitFunctionCall(gen, logMethod, line.Label);
                     break;
                 case "SGN":
-                    EmitFunctionCall(gen, sgnMethod, exprs[0]);
+                    EmitFunctionCall(gen, sgnMethod);
                     gen.Emit(OpCodes.Conv_R8); // Sign returns an int
                     break;
                 case "SIN":
-                    EmitFunctionCall(gen, sinMethod, exprs[0]);
+                    EmitFunctionCall(gen, sinMethod);
                     break;
                 case "SQR":
-                    EmitFunctionCall(gen, sqrMethod, line.Label, exprs[0]);
+                    EmitFunctionCall(gen, sqrMethod, line.Label);
                     break;
                 case "TAN":
-                    EmitFunctionCall(gen, tanMethod, exprs[0]);
+                    EmitFunctionCall(gen, tanMethod);
                     break;
 
             }
@@ -169,7 +169,7 @@ namespace mbasic.SyntaxTree
                     return BasicType.Number;
                 case "CHR$":
                     if (exprs.Length != 1) return BasicType.Error;
-                    if (argsTypes[0] != BasicType.Number) return BasicType.Error;
+                    if (TypeIsNotNumeric(argsTypes[0])) return BasicType.Error;
                     return BasicType.String;
                 case "LEN":
                     if (exprs.Length != 1) return BasicType.Error;
@@ -179,17 +179,17 @@ namespace mbasic.SyntaxTree
                     if (exprs.Length != 3) return BasicType.Error;
                     if (argsTypes[0] != BasicType.String) return BasicType.Error;
                     if (argsTypes[1] != BasicType.String) return BasicType.Error;
-                    if (argsTypes[2] != BasicType.Number) return BasicType.Error;
+                    if (TypeIsNotNumeric(argsTypes[2])) return BasicType.Error;
                     return BasicType.Number;
                 case "SEG$":
                     if (exprs.Length != 3) return BasicType.Error;
                     if (argsTypes[0] != BasicType.String) return BasicType.Error;
-                    if (argsTypes[1] != BasicType.Number) return BasicType.Error;
-                    if (argsTypes[2] != BasicType.Number) return BasicType.Error;
+                    if (TypeIsNotNumeric(argsTypes[1])) return BasicType.Error;
+                    if (TypeIsNotNumeric(argsTypes[2])) return BasicType.Error;
                     return BasicType.String;
                 case "STR$":
                     if (exprs.Length != 1) return BasicType.Error;
-                    if (argsTypes[0] != BasicType.Number) return BasicType.Error;
+                    if (TypeIsNotNumeric(argsTypes[0])) return BasicType.Error;
                     return BasicType.String;
                 case "VAL":
                     if (exprs.Length != 1) return BasicType.Error;
@@ -208,7 +208,7 @@ namespace mbasic.SyntaxTree
                 case "SQR":
                 case "TAN":
                     if (exprs.Length != 1) return BasicType.Error;
-                    if (argsTypes[0] != BasicType.Number) return BasicType.Error;
+                    if (TypeIsNotNumeric(argsTypes[0])) return BasicType.Error;
                     return BasicType.Number;
                 default:
                     return BasicType.Error;
@@ -216,19 +216,22 @@ namespace mbasic.SyntaxTree
         }
 
         private void EmitFunctionCall(ILGenerator gen,
-            MethodInfo method, params Expression[] exprs)
+            MethodInfo method)
         {
-            foreach (Expression expr in exprs)
-                expr.Emit(gen);
+            for (int i = 0; i < exprs.Length; i++)
+            {
+                exprs[i].Emit(gen);
+                if (argsTypes[i] == BasicType.Boolean) EmitConvertToDouble(gen);
+            }
 
             gen.Emit(OpCodes.Call, method);
         }
 
         private void EmitFunctionCall(ILGenerator gen,
-            MethodInfo method, string label, params Expression[] exprs)
+            MethodInfo method, string label)
         {
             gen.Emit(OpCodes.Ldstr, label);
-            EmitFunctionCall(gen, method, exprs);
+            EmitFunctionCall(gen, method);
         }
 
 

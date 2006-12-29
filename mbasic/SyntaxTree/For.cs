@@ -48,7 +48,7 @@ namespace mbasic.SyntaxTree
         public override void CheckTypes()
         {
             init.CheckTypes();
-            if (comparison.GetBasicType() != BasicType.Number) throw new Exception("Type mismatch in comparison of for loop");
+            if (comparison.GetBasicType() != BasicType.Boolean) throw new Exception("Type mismatch in comparison of for loop");
             update.CheckTypes();
             stmt.CheckTypes();
         }
@@ -81,9 +81,7 @@ namespace mbasic.SyntaxTree
 
             gen.MarkLabel(condition);
             comparison.Emit(gen);
-            gen.Emit(OpCodes.Ldc_R8, 0.0);
-            gen.Emit(OpCodes.Ceq);
-            gen.Emit(OpCodes.Brfalse, start);
+            gen.Emit(OpCodes.Brtrue, start);
 
         }
 

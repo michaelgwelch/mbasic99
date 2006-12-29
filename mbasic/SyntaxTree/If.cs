@@ -30,6 +30,7 @@ namespace mbasic.SyntaxTree
         Goto jmp;
         Goto elseJmp;
         Expression conditional;
+        BasicType exprType;
         public If(Expression conditional, string label, LineId line) : base(line)
         {
             jmp = new Goto(label, line);
@@ -47,7 +48,11 @@ namespace mbasic.SyntaxTree
 
         public override void CheckTypes()
         {
-            if (conditional.GetBasicType() == BasicType.Number) return;
+            exprType = conditional.GetBasicType();
+            
+            if (conditional.GetBasicType() == BasicType.Number || 
+                conditional.GetBasicType() == BasicType.Boolean) return;
+            throw new Exception(String.Format("Type error in conditional of If on {0}", line.Label));
         }
 
         public override void Emit(ILGenerator gen)
@@ -61,8 +66,8 @@ namespace mbasic.SyntaxTree
             MarkSequencePoint(gen);
             Label falseCase = gen.DefineLabel();
             conditional.Emit(gen);
-            gen.Emit(OpCodes.Ldc_R8, 0.0);
-            gen.Emit(OpCodes.Beq_S, falseCase);
+            if (exprType == BasicType.Number) EmitConvertToBoolean(gen);
+            gen.Emit(OpCodes.Brfalse_S, falseCase);
             jmp.Emit(gen, true);
             gen.MarkLabel(falseCase);
             if (elseJmp != null) elseJmp.Emit(gen, true);

@@ -4,4 +4,4 @@
 120 print i
 130 Next i
 140 x = x - 1
-150 if x >= 0 then 100
+150 if (x >= 0) * 6 then 100

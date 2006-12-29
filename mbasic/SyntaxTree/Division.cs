@@ -25,37 +25,18 @@ using System.Reflection.Emit;
 
 namespace mbasic.SyntaxTree
 {
-    class Division : Expression
+    class Division : BinaryOperator
     {
-        Expression op1;
-        Expression op2;
-        BasicType type;
+
 
         public Division(Expression e1, Expression e2, LineId line)
-            : base(line)
+            : base(e1, e2, line)
         {
-            this.op1 = e1;
-            this.op2 = e2;
         }
 
-        public override BasicType GetBasicType()
-        {
 
-            BasicType type1 = op1.GetBasicType();
-            BasicType type2 = op2.GetBasicType();
-            if (type1 == BasicType.Number && type2 == BasicType.Number)
-            {
-                type = BasicType.Number;
-            }
-            else
-                TypeMismtach();
-            return type;
-        }
-
-        public override void Emit(ILGenerator gen)
+        protected override void EmitOperation(ILGenerator gen)
         {
-            op1.Emit(gen);
-            op2.Emit(gen);
             gen.Emit(OpCodes.Div);
         }
     }

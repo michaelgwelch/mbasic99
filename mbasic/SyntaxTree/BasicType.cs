@@ -25,6 +25,7 @@ namespace mbasic.SyntaxTree
     {
         Number,
         String,
+        Boolean,    // Not really a TiBasic type, but one used for optimization. A user will never "see" one of these.
         Error
     }
 }

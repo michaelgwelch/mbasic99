@@ -61,6 +61,11 @@ namespace mbasic.SyntaxTree
                 gen.Emit(OpCodes.Dup); // Duplicate the array reference, so it's still on stack after this use
                 gen.Emit(OpCodes.Ldc_I4, i);
                 values[i].Emit(gen);
+                if (printItemTypes[i] == BasicType.Boolean)
+                {
+                    EmitConvertToDouble(gen);
+                    gen.Emit(OpCodes.Box, typeof(double));
+                }
                 if (printItemTypes[i] == BasicType.Number) gen.Emit(OpCodes.Box, typeof(double));
                 gen.Emit(OpCodes.Stelem_Ref);
             }

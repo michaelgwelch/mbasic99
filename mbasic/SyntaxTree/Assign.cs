@@ -28,6 +28,7 @@ namespace mbasic.SyntaxTree
     {
         int localIndex;
         Expression value;
+        BasicType valueType;
         public Assign(int index, Expression value, LineId line)
             : base(line)
         {
@@ -44,6 +45,7 @@ namespace mbasic.SyntaxTree
             if (!labelSetAlready) MarkLabel(gen);
             MarkSequencePoint(gen);
             value.Emit(gen);
+            if (valueType == BasicType.Boolean) EmitConvertToDouble(gen);
             gen.Emit(OpCodes.Stloc, locals[localIndex]);
         }
 
@@ -54,7 +56,12 @@ namespace mbasic.SyntaxTree
             if (varType == typeof(string)) varBasicType = BasicType.String;
             else varBasicType = BasicType.Number;
 
-            if (varBasicType == value.GetBasicType()) return;
+            valueType = value.GetBasicType();
+
+            if (varBasicType == BasicType.String && valueType == BasicType.String) return;
+
+            if (valueType == BasicType.Number || valueType == BasicType.Boolean) return;
+
             throw new Exception("Type mismatch exception in an assignment");
             
         }

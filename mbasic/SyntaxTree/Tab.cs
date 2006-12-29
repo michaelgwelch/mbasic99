@@ -30,6 +30,7 @@ namespace mbasic.SyntaxTree
     class Tab : Expression
     {
         Expression expr;
+        BasicType exprType;
         public Tab(Expression expr, LineId line)
             : base(line)
         {
@@ -37,7 +38,8 @@ namespace mbasic.SyntaxTree
         }
         public override BasicType GetBasicType()
         {
-            if (expr.GetBasicType() == BasicType.Number) return BasicType.String;
+            exprType = expr.GetBasicType();
+            if (exprType == BasicType.Number || exprType == BasicType.Boolean) return BasicType.String;
             return BasicType.Error;
         }
 
@@ -49,7 +51,8 @@ namespace mbasic.SyntaxTree
         public override void Emit(ILGenerator gen)
         {
             gen.Emit(OpCodes.Ldstr, "\t");
-            expr.Emit(gen); // will load a double on the stack
+            expr.Emit(gen); // will load a double (or boolean) on the stack
+            if (exprType == BasicType.Boolean) EmitConvertToDouble(gen);
             gen.Emit(OpCodes.Call, toStringMethod); // will convert number to string
             gen.Emit(OpCodes.Call, concatenateMethod); // will concatenate them into one string
         }

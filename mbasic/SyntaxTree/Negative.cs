@@ -29,6 +29,7 @@ namespace mbasic.SyntaxTree
     class Negative : Expression
     {
         Expression value;
+        BasicType valueType;
         BasicType type;
         public Negative(Expression value, LineId line) : base(line)
         {
@@ -36,14 +37,17 @@ namespace mbasic.SyntaxTree
         }
         public override BasicType GetBasicType()
         {
-            if (value.GetBasicType() == BasicType.Number)
+            valueType = value.GetBasicType();
+            if (valueType == BasicType.Number || valueType == BasicType.Boolean)
                 type = BasicType.Number;
+            else type = BasicType.Error;
             return type;
         }
 
         public override void Emit(System.Reflection.Emit.ILGenerator gen)
         {
             value.Emit(gen);
+            if (valueType == BasicType.Boolean) EmitConvertToDouble(gen);
             gen.Emit(OpCodes.Neg);
         }
     }

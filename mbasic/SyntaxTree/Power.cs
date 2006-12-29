@@ -26,42 +26,18 @@ using System.Reflection.Emit;
 using System.Reflection;
 namespace mbasic.SyntaxTree
 {
-    class Power : Expression
+    class Power : BinaryOperator
     {
         private static readonly MethodInfo powerMethod =
             typeof(Math).GetMethod("Pow");
-        Expression op1;
-        Expression op2;
-        BasicType type;
         public Power(Expression e1, Expression e2, LineId line)
-            : base(line)
+            : base(e1, e2, line)
         {
-            this.op1 = e1;
-            this.op2 = e2;
         }
 
-        public override void Emit(ILGenerator gen)
+        protected override void EmitOperation(ILGenerator gen)
         {
-            
-            op1.Emit(gen);
-            op2.Emit(gen);
             gen.Emit(OpCodes.Call, powerMethod);
-        }
-
-
-
-        public override BasicType GetBasicType()
-        {
-            BasicType type1 = op1.GetBasicType();
-            BasicType type2 = op2.GetBasicType();
-            if (type1 == BasicType.Number && type2 == BasicType.Number)
-            {
-                type = BasicType.Number;
-            }
-            else
-                TypeMismtach();
-            return type;
-
         }
     }
 }

@@ -36,5 +36,12 @@ namespace mbasic.SyntaxTree
             string msg = String.Format("Type Mismatch On {0}", line.Label);
             throw new Exception(msg);
         }
+
+        protected static bool TypeIsNotNumeric(BasicType type)
+        {
+            if (type != BasicType.Number && type != BasicType.Boolean) return true;
+            return false;
+        }
+
     }
 }

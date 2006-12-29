@@ -53,7 +53,7 @@ namespace mbasic.SyntaxTree
             if (t1 == t2)
             {
                 argType = t1;
-                return BasicType.Number;
+                return BasicType.Boolean;
             }
             return BasicType.Error;
         }
@@ -66,12 +66,6 @@ namespace mbasic.SyntaxTree
             EmitOperation(gen);
 
             if (not) EmitNot(gen);
-
-            // TI Basic uses -1/0, .NET uses 1/0, 
-            // plus we need to convert from Int32 to double
-            gen.Emit(OpCodes.Conv_R8);
-            gen.Emit(OpCodes.Neg);
-
         }
 
         private void EmitNot(ILGenerator gen)

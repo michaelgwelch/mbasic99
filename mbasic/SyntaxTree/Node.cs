@@ -46,5 +46,26 @@ using System.Reflection;
         public static bool debug;
         public static ISymbolDocumentWriter writer;
 
+        /// <summary>
+        /// converts a boolean to a double
+        /// </summary>
+        /// <param name="gen"></param>
+        protected static void EmitConvertToDouble(ILGenerator gen)
+        {
+            gen.Emit(OpCodes.Conv_R8);
+            gen.Emit(OpCodes.Neg);
+        }
+
+
+        private static readonly MethodInfo convertToBooleanMethod =
+            typeof(Convert).GetMethod("ToBoolean", new Type[] { typeof(double) });
+        /// <summary>
+        /// converts a double to a boolean
+        /// </summary>
+        /// <param name="gen"></param>
+        protected static void EmitConvertToBoolean(ILGenerator gen)
+        {
+            gen.Emit(OpCodes.Call, convertToBooleanMethod);
+        }
     }
 }
