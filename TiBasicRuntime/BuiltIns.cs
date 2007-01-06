@@ -354,5 +354,18 @@ namespace TiBasicRuntime
             labelIndex = data.IndexOfKey(label);
             pos = 0;
         }
+
+        #region GOSUB/RETURN Helpers
+        private static readonly Stack<int> gosubs = new Stack<int>();
+        public static void PushReturnAddress(int index)
+        {
+            gosubs.Push(index);
+        }
+
+        public static int PopReturnAddress()
+        {
+            return gosubs.Pop();
+        }
+        #endregion
     }
 }

@@ -64,8 +64,11 @@ namespace mbasic
             Statement retVal = null;
             switch (lookahead)
             {
+                case Token.Remark:
+                    retVal = RemarkStatement();
+                    break;
                 case Token.Print:
-                    retVal = Print();
+                    retVal = PrintStatement();
                     break;
                 case Token.For:
                     retVal = ForStatement();
@@ -74,19 +77,19 @@ namespace mbasic
                     Match(Token.Let);
                     goto case Token.Variable;
                 case Token.Variable:
-                    retVal = Assign();
+                    retVal = AssignStatement();
                     break;
                 case Token.Input:
-                    retVal = Input();
+                    retVal = InputStatement();
                     break;
                 case Token.If:
                     retVal = IfStatement();
                     break;
                 case Token.Goto:
-                    retVal = Goto();
+                    retVal = GotoStatement();
                     break;
                 case Token.Randomize:
-                    retVal = Randomize();
+                    retVal = RandomizeStatement();
                     break;
                 case Token.Call:
                     retVal = CallSubroutine();
@@ -103,10 +106,57 @@ namespace mbasic
                 case Token.Restore:
                     retVal = RestoreStatement();
                     break;
+                case Token.Go:
+                    retVal = GoStatement();
+                    break;
+                case Token.Gosub:
+                    retVal = GosubStatement();
+                    break;
+                case Token.Return:
+                    retVal = ReturnStatement();
+                    break;
 
             }
             Match(Token.EndOfLine);
             return retVal;
+        }
+
+        private Statement RemarkStatement()
+        {
+            LineId line = lexer.LineId;
+            Statement remark = new Remark(line);
+            Match(Token.Remark);
+            return remark;
+        }
+
+        private Statement ReturnStatement()
+        {
+            LineId line = lexer.LineId;
+            Statement returnStatement = new Return(line);
+            Match(Token.Return);
+            return returnStatement;
+        }
+
+        private Statement GoStatement()
+        {
+            Match(Token.Go);
+            Match(Token.Sub);
+            return GosubStatementInternal();
+        }
+
+        private Statement GosubStatement()
+        {
+            Match(Token.Gosub);
+            return GosubStatementInternal();
+        }
+
+        private Statement GosubStatementInternal()
+        {
+            string destLabel = lexer.Value;
+            LineId line = lexer.LineId;
+            Statement gosub = new Gosub(destLabel, line);
+            Match(Token.Number);
+            return gosub;
         }
 
         private Statement RestoreStatement()
@@ -166,7 +216,7 @@ namespace mbasic
 
         }
 
-        private Statement Randomize()
+        private Statement RandomizeStatement()
         {
             LineId line = lexer.LineId;
             Match(Token.Randomize);
@@ -194,7 +244,7 @@ namespace mbasic
             return new If(conditional, label, line);
         }
 
-        private Statement Goto()
+        private Statement GotoStatement()
         {
             LineId line = lexer.LineId;
             Match(Token.Goto);
@@ -203,7 +253,7 @@ namespace mbasic
             return new Goto(label, line);
         }
 
-        private Statement Input()
+        private Statement InputStatement()
         {
             LineId line = lexer.LineId;
             Match(Token.Input);
@@ -212,7 +262,7 @@ namespace mbasic
             return new Input(index, line);
         }
 
-        private Statement Assign()
+        private Statement AssignStatement()
         {
             LineId line = lexer.LineId;
             int index = lexer.SymbolIndex;
@@ -472,7 +522,7 @@ namespace mbasic
 
         #endregion Expression Handling
 
-        private Statement Print()
+        private Statement PrintStatement()
         {
             LineId line = lexer.LineId;
             Match(Token.Print);

@@ -46,7 +46,9 @@ internal enum Token
     Float,
     For,
     Function,
+    Go, // As part of GO SUB 
     Goto,
+    Gosub,
     GreaterThanEqual,
     If,
     Input,
@@ -62,8 +64,10 @@ internal enum Token
     Read,
     Remark, // technically not a token, and should never be returned. Used internally by lexer only.
     Restore,
+    Return,
     String,
-    Subroutine,
+    Sub,        // The key word "SUB"
+    Subroutine, // A built in subroutine like clear, or print.
     Tab,
     Then,
     To,

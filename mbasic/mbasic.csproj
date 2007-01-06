@@ -52,6 +52,7 @@
     <Compile Include="SyntaxTree\Expression.cs" />
     <Compile Include="SyntaxTree\For.cs" />
     <Compile Include="SyntaxTree\Function.cs" />
+    <Compile Include="SyntaxTree\Gosub.cs" />
     <Compile Include="SyntaxTree\Goto.cs" />
     <Compile Include="SyntaxTree\If.cs" />
     <Compile Include="SyntaxTree\Increment.cs" />
@@ -66,7 +67,9 @@
     <Compile Include="SyntaxTree\Randomize.cs" />
     <Compile Include="SyntaxTree\Read.cs" />
     <Compile Include="SyntaxTree\RelationalExpression.cs" />
+    <Compile Include="SyntaxTree\Remark.cs" />
     <Compile Include="SyntaxTree\Restore.cs" />
+    <Compile Include="SyntaxTree\Return.cs" />
     <Compile Include="SyntaxTree\Statement.cs" />
     <Compile Include="SyntaxTree\Subroutine.cs" />
     <Compile Include="SyntaxTree\Subtract.cs" />

@@ -113,10 +113,7 @@ namespace mbasic
                     {
                         Token word = NextWord(); // keywords and variables, and remarks
                         if (word == Token.Data) readingData = true;
-                        if (word != Token.Remark) return word;
-                        // Reset us back to start of line
-                        startOfLine = true; // after reading a REM we are now at start of line.
-                        continue;
+                        return word;
                     }
 
                     if (ch == '\"') return NextString();
@@ -265,11 +262,10 @@ namespace mbasic
                     ch = reader.Read();
                     if (ch == '\n')
                     {
-                        // consume the line feed 
-                        reader.Advance();
                         return Token.Remark;
                     }
                 }
+                if (reader.EndOfStream) return Token.Remark;
             }
 
             index = symbols.Lookup(value);

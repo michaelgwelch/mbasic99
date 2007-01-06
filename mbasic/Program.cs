@@ -36,6 +36,9 @@ namespace mbasic
 
     class Program
     {
+        static readonly MethodInfo popMethod =
+            typeof(BuiltIns).GetMethod("PopReturnAddress");
+
         static void Main(string[] args)
         {
             bool debug = true;
@@ -134,11 +137,26 @@ namespace mbasic
             }
             #endregion
 
+            Node.returnSwitch = gen.DefineLabel();
             // Emit try
             Label end = gen.BeginExceptionBlock();
             Node.endLabel = end;
 
             n.Emit(gen);
+
+            #region Emit Return Switch for GOSUB/RETURN
+            gen.MarkSequencePoint(Node.writer, Int32.MaxValue, -1, Int32.MaxValue, -1);
+
+            Label exitLabel = gen.DefineLabel();
+            gen.Emit(OpCodes.Br, exitLabel);
+
+            gen.MarkLabel(Node.returnSwitch);
+
+            gen.Emit(OpCodes.Call, popMethod);
+            gen.Emit(OpCodes.Switch, Node.returnLabels.ToArray());
+
+            gen.MarkLabel(exitLabel);
+            #endregion
 
             // Emit catch
             gen.BeginCatchBlock(typeof(Exception));
@@ -147,8 +165,8 @@ namespace mbasic
             MethodInfo writeLineMethod = typeof(Console).GetMethod("WriteLine", new Type[] { typeof(string) });
             gen.Emit(OpCodes.Call, writeLineMethod);
             gen.EndExceptionBlock();
-            
 
+            gen.MarkSequencePoint(Node.writer, Int32.MaxValue, -1, Int32.MaxValue, -1);
             gen.Emit(OpCodes.Ret);
 
 
@@ -166,28 +184,33 @@ namespace mbasic
 
         static private void InitializeReservedWords(SymbolTable symbols)
         {
-            symbols.ReserveWord("ELSE", Token.Else);
-            symbols.ReserveWord("PRINT", Token.Print);
-            symbols.ReserveWord("INPUT", Token.Input);
-            symbols.ReserveWord("GOTO", Token.Goto);
-            symbols.ReserveWord("IF", Token.If);
-            symbols.ReserveWord("FOR", Token.For);
-            symbols.ReserveWord("TO", Token.To);
-            symbols.ReserveWord("NEXT", Token.Next);
-            symbols.ReserveWord("THEN", Token.Then);
+            // Keywords for statements
             symbols.ReserveWord("CALL", Token.Call);
             symbols.ReserveWord("CLEAR", Token.Subroutine);
-            symbols.ReserveWord("DISPLAY", Token.Print);
-            symbols.ReserveWord("REM", Token.Remark);
-            symbols.ReserveWord("LET", Token.Let);
-            symbols.ReserveWord("END", Token.End);
-            symbols.ReserveWord("STOP", Token.End);
-            symbols.ReserveWord("TAB", Token.Tab);
             symbols.ReserveWord("DATA", Token.Data);
+            symbols.ReserveWord("DISPLAY", Token.Print);
+            symbols.ReserveWord("ELSE", Token.Else);
+            symbols.ReserveWord("END", Token.End);
+            symbols.ReserveWord("FOR", Token.For);
+            symbols.ReserveWord("GO", Token.Go);
+            symbols.ReserveWord("GOSUB", Token.Gosub);
+            symbols.ReserveWord("GOTO", Token.Goto);
+            symbols.ReserveWord("IF", Token.If);
+            symbols.ReserveWord("INPUT", Token.Input);
+            symbols.ReserveWord("LET", Token.Let);
+            symbols.ReserveWord("NEXT", Token.Next);
+            symbols.ReserveWord("PRINT", Token.Print);
             symbols.ReserveWord("READ", Token.Read);
+            symbols.ReserveWord("REM", Token.Remark);
             symbols.ReserveWord("RESTORE", Token.Restore);
+            symbols.ReserveWord("RETURN", Token.Return);
+            symbols.ReserveWord("STOP", Token.End);
+            symbols.ReserveWord("SUB", Token.Sub);
+            symbols.ReserveWord("TAB", Token.Tab);
+            symbols.ReserveWord("THEN", Token.Then);
+            symbols.ReserveWord("TO", Token.To);
 
-            // String Functionis
+            // String Functions
             symbols.ReserveWord("ASC", Token.Function);
             symbols.ReserveWord("CHR$", Token.Function);
             symbols.ReserveWord("LEN", Token.Function);

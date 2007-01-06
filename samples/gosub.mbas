@@ -1,0 +1,15 @@
+90 REM gosub example
+100 for i = 1 to 3
+110 gosub 150
+120 print "i=";i
+130 next i
+131 gosub 1000
+140 stop
+150 rem subroutine
+160 for x = 1 to 2
+170 print "x=";x
+180 next x
+190 return
+
+1000 print "subroutine 1000 here."
+1010 return
