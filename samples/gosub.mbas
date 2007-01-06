@@ -12,4 +12,11 @@
 190 return
 
 1000 print "subroutine 1000 here."
-1010 return
+1020 if j = 0 then 1030 else 1040
+1030 gosub 2000
+1040 return
+
+2000 j = 1
+2010 print "subroutine 2000 here."
+2020 gosub 1000
+2030 return
