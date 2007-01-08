@@ -35,10 +35,12 @@ namespace mbasic
         public Lexer lexer;
         SortedList<string, object[]> data;
         Token lookahead;
+        SymbolTable symbols;
         public Parser(Stream stream, SymbolTable symbols, SortedList<string, object[]> data)
         {
             lexer = new Lexer(stream, symbols);
             this.data = data;
+            this.symbols = symbols;
         }
 
         public Statement Parse()
@@ -180,15 +182,23 @@ namespace mbasic
         {
             Match(Token.Read);
             LineId line = lexer.LineId;
-            List<int> indexes = new List<int>();
+            List<Assign> reads = new List<Assign>();
             while (lookahead != Token.EOF && lookahead != Token.EndOfLine)
             {
-                indexes.Add(lexer.SymbolIndex); // The variable to read into.
+                int symbolIndex = lexer.SymbolIndex;
+                switch (symbols[symbolIndex].BasicType)
+                {
+                    case BasicType.Number:
+                        reads.Add(Assign.ReadNumberFromData(symbolIndex, line));
+                        break;
+                    case BasicType.String:
+                        reads.Add(Assign.ReadStringFromData(symbolIndex, line));
+                        break;
+                }
                 Match(Token.Variable);
                 if (lookahead == Token.Comma) Match(Token.Comma);
             }
-            Read read = new Read(indexes.ToArray(), line);
-            return read;
+            return new Read(reads.ToArray(), line);
         }
 
         private Statement DataStatement()

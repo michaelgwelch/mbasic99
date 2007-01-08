@@ -9,51 +9,28 @@ namespace mbasic.SyntaxTree
 {
     class Read : Statement
     {
-        int[] indexes;
-        BasicType[] varType;
+        Assign[] assignments;
 
-        private static readonly MethodInfo readNumberMethod =
-            typeof(BuiltIns).GetMethod("ReadDouble");
-
-        private static readonly MethodInfo readStringMethod =
-            typeof(BuiltIns).GetMethod("ReadString");
-
-        public Read(int[] indexes, LineId line)
+        public Read(Assign[] assignments, LineId line)
             : base(line)
         {
-            this.indexes = indexes;
-            varType = new BasicType[indexes.Length];
+            this.assignments = assignments;
         }
 
         public override void CheckTypes()
         {
-            for (int i = 0; i < indexes.Length; i++)
-            {
-                Type t = locals[indexes[i]].LocalType;
-
-                if (t == typeof(string)) varType[i] = BasicType.String;
-                else varType[i] = BasicType.Number;
-            }
+            // Nothing to do. The parser creates assigns that have matching
+            // variables and value types.
         }
 
         public override void Emit(ILGenerator gen, bool labelSetAlready)
         {
             if (!labelSetAlready) MarkLabel(gen);
             MarkSequencePoint(gen);
-            for (int i = 0; i < indexes.Length; i++)
+            for (int i = 0; i < assignments.Length; i++)
             {
-                gen.Emit(OpCodes.Ldloca, locals[indexes[i]]);
-
-                if (varType[i] == BasicType.Number)
-                {
-                    gen.Emit(OpCodes.Call, readNumberMethod);
-                }
-                else if (varType[i] == BasicType.String)
-                {
-                    gen.Emit(OpCodes.Call, readStringMethod);
-                }
+                assignments[i].Emit(gen, true);
             }
-                
         }
     }
 }

@@ -299,12 +299,14 @@ namespace TiBasicRuntime
             data.Add(label, objects);
         }
 
-        public static void ReadDouble(out double d)
+        public static double ReadNumberFromData()
         {
+            double d;
             object o = Read();
             if (o is double)
             {
                 d = (double)o;
+                return d;
             }
             else
             {
@@ -312,8 +314,9 @@ namespace TiBasicRuntime
             }
         }
 
-        public static void ReadString(out string s)
+        public static string ReadStringFromData()
         {
+            string s;
             object o = Read();
             if (o is string)
             {
@@ -323,6 +326,7 @@ namespace TiBasicRuntime
             {
                 s = Radix100.ToString((double)o);
             }
+            return s;
         }
 
         private static object Read()

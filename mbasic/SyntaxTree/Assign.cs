@@ -22,6 +22,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Reflection.Emit;
+using System.Reflection;
+using TiBasicRuntime;
+
 namespace mbasic.SyntaxTree
 {
     class Assign : Statement
@@ -40,6 +43,7 @@ namespace mbasic.SyntaxTree
         {
             Emit(gen, false);
         }
+
         public override void Emit(ILGenerator gen, bool labelSetAlready)
         {
             if (!labelSetAlready) MarkLabel(gen);
@@ -64,6 +68,27 @@ namespace mbasic.SyntaxTree
 
             throw new Exception("Type mismatch exception in an assignment");
             
+        }
+
+
+        public static Assign ReadStringFromData(int symbolIndex, LineId line)
+        {
+            return new Assign(symbolIndex, BuiltInsMethodCall.ReadStringFromData(), line);
+        }
+
+        public static Assign ReadNumberFromData(int symbolIndex, LineId line)
+        {
+            return new Assign(symbolIndex, BuiltInsMethodCall.ReadNumberFromData(), line);
+        }
+
+        public static Assign ReadStringFromConsole(int symbolIndex, LineId line)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static Assign ReadNumberFromConsole(int symbolIndex, LineId line)
+        {
+            throw new NotImplementedException();
         }
 
     }

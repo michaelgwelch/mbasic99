@@ -44,6 +44,7 @@
     <Compile Include="SyntaxTree\BasicType.cs" />
     <Compile Include="SyntaxTree\BinaryOperator.cs" />
     <Compile Include="SyntaxTree\Block.cs" />
+    <Compile Include="SyntaxTree\BuiltInsMethodCall.cs" />
     <Compile Include="SyntaxTree\Concatenate.cs" />
     <Compile Include="SyntaxTree\Data.cs" />
     <Compile Include="SyntaxTree\Division.cs" />
