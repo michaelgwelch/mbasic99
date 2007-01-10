@@ -15,6 +15,14 @@ namespace TiBasicRuntime
             Assert.IsFalse(Radix100.MinValue.IsInteger, "min");
             Assert.IsFalse(Radix100.Epsilon.IsInteger, "epsilon");
             Assert.IsTrue(Radix100.Zero.IsInteger, "zero");
+
+            string maxValue = "9.99999E+**";
+            string minValue = "-9.99999E+**";
+            double epsilon = 1E-128;
+            Assert.AreEqual(maxValue, Radix100.MaxValue.ToString());
+            Assert.AreEqual(minValue, Radix100.MinValue.ToString());
+            Assert.AreEqual(epsilon, (double)Radix100.Epsilon, (double)Radix100.Epsilon);
+
         }
 
         [Test]

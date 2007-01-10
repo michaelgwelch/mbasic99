@@ -83,12 +83,12 @@ namespace mbasic.SyntaxTree
 
         public static Assign ReadStringFromConsole(int symbolIndex, LineId line)
         {
-            throw new NotImplementedException();
+            return new Assign(symbolIndex, BuiltInsMethodCall.ReadStringFromConsole(), line);
         }
 
         public static Assign ReadNumberFromConsole(int symbolIndex, LineId line)
         {
-            throw new NotImplementedException();
+            return new Assign(symbolIndex, BuiltInsMethodCall.ReadNumberFromConsole(), line);
         }
 
     }

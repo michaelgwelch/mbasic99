@@ -36,9 +36,9 @@ namespace TiBasicRuntime
         // The specs say that the Exp and MSD should be complemented but I don't see the need
         // so i won't for my implementation.
 
-        public static readonly Radix100 MaxValue = new Radix100(0x7FFFFFFFFFFFFFFF);
-        public static readonly Radix100 MinValue = new Radix100(0x8001FFFFFFFFFFFF);
-        public static readonly Radix100 Epsilon = new Radix100(0x0001000000000000);
+        public static readonly Radix100 MaxValue = new Radix100(0x7F63636363636363); // 9.9999999999999E127
+        public static readonly Radix100 MinValue = new Radix100(0xFF63636363636363); //-9.9999999999999E127
+        public static readonly Radix100 Epsilon = new Radix100(0x0001000000000000);  // 1E-128
         public static readonly Radix100 Zero = new Radix100(0x4000000000000000);
         public static readonly Radix100 One = new Radix100(0x4001000000000000);
 
@@ -209,6 +209,7 @@ namespace TiBasicRuntime
         }
 
         #endregion
+
 
 
 

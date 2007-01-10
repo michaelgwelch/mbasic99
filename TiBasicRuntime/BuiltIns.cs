@@ -371,5 +371,58 @@ namespace TiBasicRuntime
             return gosubs.Pop();
         }
         #endregion
+
+        private static string[] consoleValues;
+        private static int consoleValuesIndex;
+        public static void ReadLineFromConsoleIntoBuffer(int expectedNumberOfValues)
+        {
+            string line = Console.ReadLine();
+            printCol = 1; 
+            InputParser parser = new InputParser(line);
+            List<string> strings = new List<string>();
+            while (!parser.EndOfString) strings.Add(parser.Next());
+
+            if (strings.Count == 0) // then the user just hit enter, or spaces and enter, which is considered a valid zero length string
+            {
+                strings.Add(String.Empty); // This entry should be considered a zero length string.
+            }
+
+
+            while (strings.Count != expectedNumberOfValues)
+            {
+                Console.WriteLine("* WARNING:");
+                Console.WriteLine("  INPUT ERROR");
+                Print("TRY AGAIN: ","\0");
+                line = Console.ReadLine();
+                parser = new InputParser(line);
+                strings = new List<string>();
+                while (!parser.EndOfString) strings.Add(parser.Next());
+            }
+            consoleValues = strings.ToArray();
+            consoleValuesIndex = 0;
+
+        }
+
+        public static double ReadNumberFromConsole()
+        {
+            string s = consoleValues[consoleValuesIndex];
+            double d;
+            if (!double.TryParse(s, out d))
+            {
+                Console.WriteLine("* WARNING:");
+                Console.WriteLine("  INPUT ERROR");
+                Print("TRY AGAIN: ","\0");
+                throw new InvalidCastException();
+            }
+            consoleValuesIndex++;
+            return d;
+        }
+
+        public static string ReadStringFromConsole()
+        {
+            string s = consoleValues[consoleValuesIndex];
+            consoleValuesIndex++;
+            return s;
+        }
     }
 }

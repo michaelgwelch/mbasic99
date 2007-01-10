@@ -35,6 +35,8 @@ namespace mbasic.SyntaxTree
             this.index = index;
         }
 
+        public int SymbolIndex { get { return index; } }
+
         public override void Emit(ILGenerator gen)
         {
             if (index < 255)

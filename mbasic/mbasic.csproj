@@ -97,6 +97,9 @@
     <None Include="..\samples\helloworld.mbas">
       <Link>samples\helloworld.mbas</Link>
     </None>
+    <None Include="..\samples\input.mbas">
+      <Link>samples\input.mbas</Link>
+    </None>
     <None Include="..\samples\print.mbas">
       <Link>samples\print.mbas</Link>
     </None>

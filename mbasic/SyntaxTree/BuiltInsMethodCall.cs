@@ -13,6 +13,10 @@ namespace mbasic.SyntaxTree
             builtInsType.GetMethod("ReadStringFromData");
         private static readonly MethodInfo readNumberFromData =
             builtInsType.GetMethod("ReadNumberFromData");
+        private static readonly MethodInfo readStringFromConsole =
+            builtInsType.GetMethod("ReadStringFromConsole");
+        private static readonly MethodInfo readNumberFromConsole =
+            builtInsType.GetMethod("ReadNumberFromConsole");
 
         private MethodInfo method;
         private BasicType type;
@@ -42,6 +46,16 @@ namespace mbasic.SyntaxTree
         public static BuiltInsMethodCall ReadNumberFromData()
         {
             return new BuiltInsMethodCall(readNumberFromData);
+        }
+
+        public static BuiltInsMethodCall ReadStringFromConsole()
+        {
+            return new BuiltInsMethodCall(readStringFromConsole);
+        }
+
+        public static BuiltInsMethodCall ReadNumberFromConsole()
+        {
+            return new BuiltInsMethodCall(readNumberFromConsole);
         }
 
     }

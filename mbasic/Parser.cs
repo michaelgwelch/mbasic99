@@ -265,11 +265,62 @@ namespace mbasic
 
         private Statement InputStatement()
         {
+            // Requires more than one token of lookahead. If we encounter a string variable
+            // after input, it could be an input prompt or the variable to store the input in.
+            // It's not until we look past that and check for a colon do we know.
+
             LineId line = lexer.LineId;
             Match(Token.Input);
-            int index = lexer.SymbolIndex;
-            Match(Token.Variable);
-            return new Input(index, line);
+            List<Assign> inputs = new List<Assign>();
+            Expression inputPrompt;
+
+            // Assume that an input prompt is given and parse it as an expression
+            // If it later turns out that it is not the input prompt, then it must
+            // be convert to an assignment.
+
+            Expression expr = Expression();
+
+            if (lookahead == Token.Colon)
+            {
+                inputPrompt = expr;
+                Match(Token.Colon);
+            }
+            else // if there is no colon then what we read shouldn't be
+                // treated as an Expression, but as an Assignment.
+            {
+                inputPrompt = new StringLiteral("? ", LineId.None);
+                VariableReference vr = (VariableReference)expr; // The expr must have been a Variable Reference
+                int symbolIndex = vr.SymbolIndex;
+                switch (symbols[symbolIndex].BasicType)
+                {
+                    case BasicType.Number:
+                        inputs.Add(Assign.ReadNumberFromConsole(symbolIndex, line));
+                        break;
+                    case BasicType.String:
+                        inputs.Add(Assign.ReadStringFromConsole(symbolIndex, line));
+                        break;
+                }
+                if (lookahead == Token.Comma) Match(Token.Comma);
+            }
+
+
+            while (lookahead != Token.EOF && lookahead != Token.EndOfLine)
+            {
+                int symbolIndex = lexer.SymbolIndex;
+                switch (symbols[symbolIndex].BasicType)
+                {
+                    case BasicType.Number:
+                        inputs.Add(Assign.ReadNumberFromConsole(symbolIndex, line));
+                        break;
+                    case BasicType.String:
+                        inputs.Add(Assign.ReadStringFromConsole(symbolIndex, line));
+                        break;
+                }
+                Match(Token.Variable);
+                if (lookahead == Token.Comma) Match(Token.Comma);
+            }
+            return new Input(inputPrompt, inputs.ToArray(), line);
+
         }
 
         private Statement AssignStatement()

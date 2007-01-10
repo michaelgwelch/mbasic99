@@ -24,59 +24,54 @@ using System.Collections.Generic;
 using System.Text;
 using System.Reflection;
 using System.Reflection.Emit;
+using TiBasicRuntime;
+
 namespace mbasic.SyntaxTree
 {
     class Input : Statement
     {
-        private static readonly MethodInfo readLineMethod =
-            typeof(Console).GetMethod("ReadLine");
 
-        private static readonly MethodInfo tryParseMethod =
-            typeof(double).GetMethod("TryParse",
-            new Type[] { typeof(string), Type.GetType("System.Double&") });
-        int index;
-        BasicType varType;
-        public Input(int index, LineId line)
+        private static readonly MethodInfo readLineMethod =
+            typeof(BuiltIns).GetMethod("ReadLineFromConsoleIntoBuffer");
+
+        Assign[] inputs;
+        Print inputPrompt;
+        public Input(Expression inputPromptExpr, Assign[] inputs, LineId line)
             : base(line)
         {
-            this.index = index; 
-        }
-
-        public override void Emit(ILGenerator gen)
-        {
-            Emit(gen, false);
+            this.inputPrompt = new Print(
+                new Expression[] { inputPromptExpr, new StringLiteral("\0", line) }, line);
+            this.inputs = inputs;
         }
 
         public override void Emit(ILGenerator gen, bool labelSetAlready)
         {
             if (!labelSetAlready) MarkLabel(gen);
-            Label readLine = gen.DefineLabel();
             MarkSequencePoint(gen);
-            gen.MarkLabel(readLine);
-            gen.Emit(OpCodes.Call, readLineMethod);
-            if (varType == BasicType.Number)
+
+            inputPrompt.Emit(gen, true);
+
+            Label begin = gen.DefineLabel();
+            gen.MarkLabel(begin);
+            gen.BeginExceptionBlock();
+
+            // Expected number of inputs:
+            gen.Emit(OpCodes.Ldc_I4, inputs.Length);
+            gen.Emit(OpCodes.Call, readLineMethod); // reads a line from console into a buffer and checks to make sure number of values equals expected number of values.
+
+            foreach (Assign input in inputs)
             {
-                // Try to parse it into a double, if not possible give a warning and read again.
-                gen.Emit(OpCodes.Ldloca, (short) index);
-                gen.Emit(OpCodes.Call, tryParseMethod);
-                // if return value is false, the parse failed. go back to read line
-                gen.Emit(OpCodes.Brfalse_S, readLine);
-
-                // Else it was successful, the local variable should have the value.
-                return;
+                input.Emit(gen, true);
             }
-            else gen.Emit(OpCodes.Stloc, locals[index]);
 
+            gen.BeginCatchBlock(typeof(InvalidCastException));
+            gen.Emit(OpCodes.Leave, begin);
+            gen.EndExceptionBlock();
         }
 
         public override void CheckTypes()
         {
-            Type t = locals[index].LocalType;
-
-            if (t == typeof(string))varType = BasicType.String;
-            else varType = BasicType.Number;
-
-
+            inputPrompt.CheckTypes();
         }
 
     }

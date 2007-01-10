@@ -46,7 +46,7 @@ namespace mbasic.SyntaxTree
         private static List<int> lines = new List<int>();
         protected void MarkSequencePoint(ILGenerator gen)
         {
-            if (debug & lines.BinarySearch(line.Number) < 0)
+            if (debug & lines.BinarySearch(line.Number) < 0 && !line.Equals(LineId.None))
             {
                 gen.MarkSequencePoint(writer, line.Number, 1, line.Number, 100);
                 lines.Add(line.Number);
