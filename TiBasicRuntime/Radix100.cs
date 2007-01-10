@@ -288,14 +288,6 @@ namespace TiBasicRuntime
             else
             {
                 int exponent = GetExponent(this);
-                if (Math.Abs(exponent) >= 50)
-                {
-                    double mantissa = GetMantissa10(this);
-                    if (mantissa < 0 && exponent < 0) return String.Format("{0:0.#####}E-**", mantissa);
-                    else if (mantissa < 0) return String.Format("{0:0.#####}E+**", mantissa);
-                    else if (exponent > 0) return String.Format("{0:0.#####}E+**", mantissa);
-                    else return String.Format("{0:0.#####}E-**", mantissa);
-                }
                 if (exponent < -4 || exponent > 5) return ToScientificForm();
                 return ToNormalDecimalForm();
                 
@@ -362,7 +354,8 @@ namespace TiBasicRuntime
             }
 
             bldr.Append("E");
-            bldr.Append(decimalExponent.ToString("+00;-00"));
+            if (decimalExponent > 99) bldr.Append(decimalExponent.ToString("+**;-**"));
+            else bldr.Append(decimalExponent.ToString("+00;-00"));
             return bldr.ToString();
 
         }

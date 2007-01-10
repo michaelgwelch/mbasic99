@@ -103,6 +103,19 @@ namespace mbasic
             n.CheckTypes();
             n.RecordLabels(gen);
 
+            #region Initialize strings to String.Empty
+
+            foreach (LocalBuilder local in locals)
+            {
+                if (local.LocalType == typeof(string))
+                {
+                    gen.Emit(OpCodes.Ldstr, String.Empty);
+                    gen.Emit(OpCodes.Stloc, local);
+                }
+            }
+
+            #endregion Intialize strings
+
             #region Create Static DATA data
             if (data.Count > 0)
             {
