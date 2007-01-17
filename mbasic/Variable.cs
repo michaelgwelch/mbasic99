@@ -30,13 +30,37 @@ namespace mbasic
     {
         string value;
         BasicType dataType; // The TI BASIC data type
-        public Variable(string val, BasicType dataType)
+        public Variable(string val)
         {
             this.value = val;
-            this.dataType = dataType;
+            this.dataType = BasicType.Unknown;
         }
 
         public BasicType BasicType { get { return dataType; } }
+        public void SetBasicType(bool isArray)
+        {
+            if (isArray) throw new ArgumentException("arrays not yet supported");
+            if (dataType == BasicType.Unknown)
+                dataType = (value.Contains("$") ? BasicType.String : BasicType.Number);
+            else
+                throw new InvalidOperationException("Data type already set");
+        }
+
+        public void SetBasicType()
+        {
+            SetBasicType(false);
+        }
+
+        public void ConstrainType(bool isArray)
+        {
+            if (dataType == BasicType.Unknown) SetBasicType(isArray);
+        }
+
+        public void ConstrainType()
+        {
+            ConstrainType(false);
+        }
+
         public string Value { get { return value; } }
     }
 }

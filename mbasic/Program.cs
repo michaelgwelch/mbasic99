@@ -49,6 +49,7 @@ namespace mbasic
             string moduleName = assemblyName + ".exe";
             string exeName = assemblyName + ".exe";
 
+            fileName = Path.GetFullPath(fileName);
             Stream stream = File.OpenRead(fileName);
             SymbolTable symbols = new SymbolTable();
             InitializeReservedWords(symbols);
@@ -84,11 +85,16 @@ namespace mbasic
             MethodBuilder mthdbldr = typeBuilder.DefineMethod("Main", MethodAttributes.Static | MethodAttributes.Public);
 
             ILGenerator gen = mthdbldr.GetILGenerator();
-            // Create global variables
+            Node.writer = mbldr.DefineDocument(fileName, Guid.Empty, Guid.Empty, Guid.Empty);
+            Node.debug = debug;
+            Node.labels = new LabelList();
+
+            n.CheckTypes();
+            // Create local variables
 
             List<LocalBuilder> locals = new List<LocalBuilder>();
-               
-            foreach(Variable v in symbols.Variables)
+
+            foreach (Variable v in symbols.Variables)
             {
                 LocalBuilder local;
                 if (v.BasicType == BasicType.String) locals.Add(local = gen.DeclareLocal(typeof(string)));
@@ -96,11 +102,8 @@ namespace mbasic
                 if (debug) local.SetLocalSymInfo(v.Value);
             }
             Node.locals = locals;
-            Node.writer = mbldr.DefineDocument(fileName, Guid.Empty, Guid.Empty, Guid.Empty);
-            Node.debug = debug;
-            Node.labels = new LabelList();
 
-            n.CheckTypes();
+
             n.RecordLabels(gen);
 
             #region Initialize strings to String.Empty

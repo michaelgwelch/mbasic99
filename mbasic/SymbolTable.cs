@@ -39,9 +39,9 @@ namespace mbasic
         /// </summary>
         /// <param name="s"></param>
         /// <param name="t"></param>
-        public int Insert(string name, BasicType basicType)
+        public int Insert(string name)
         {
-            variables.Add(new Variable(name, basicType));
+            variables.Add(new Variable(name));
             return variables.Count - 1;
         }
 

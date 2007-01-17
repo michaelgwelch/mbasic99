@@ -186,6 +186,7 @@ namespace mbasic
             while (lookahead != Token.EOF && lookahead != Token.EndOfLine)
             {
                 int symbolIndex = lexer.SymbolIndex;
+                symbols[symbolIndex].ConstrainType();
                 switch (symbols[symbolIndex].BasicType)
                 {
                     case BasicType.Number:
@@ -291,6 +292,7 @@ namespace mbasic
                 inputPrompt = new StringLiteral("? ", LineId.None);
                 VariableReference vr = (VariableReference)expr; // The expr must have been a Variable Reference
                 int symbolIndex = vr.SymbolIndex;
+                symbols[symbolIndex].ConstrainType();
                 switch (symbols[symbolIndex].BasicType)
                 {
                     case BasicType.Number:
@@ -307,6 +309,7 @@ namespace mbasic
             while (lookahead != Token.EOF && lookahead != Token.EndOfLine)
             {
                 int symbolIndex = lexer.SymbolIndex;
+                symbols[symbolIndex].ConstrainType();
                 switch (symbols[symbolIndex].BasicType)
                 {
                     case BasicType.Number:

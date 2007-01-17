@@ -271,13 +271,9 @@ namespace mbasic
             index = symbols.Lookup(value);
             if (index == -1)
             {
-                BasicType basicType = (value.Contains("$") ? BasicType.String : BasicType.Number);
-                index = symbols.Insert(value, basicType);
+                index = symbols.Insert(value);
             }
             return Token.Variable;
-
-
-
         }
 
         private Token NextString(bool quoted)

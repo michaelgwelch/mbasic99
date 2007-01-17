@@ -69,7 +69,9 @@ namespace mbasic.SyntaxTree
 
         public override BasicType GetBasicType()
         {
-            return symbols[index].BasicType;
+            Variable var = symbols[index];
+            if (var.BasicType == BasicType.Unknown) var.SetBasicType();
+            return var.BasicType;
         }
     }
 }

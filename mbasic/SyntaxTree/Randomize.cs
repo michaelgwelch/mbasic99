@@ -54,9 +54,12 @@ namespace mbasic.SyntaxTree
 
         public override void CheckTypes()
         {
-            exprType = seedExpression.GetBasicType();
-            if (exprType == BasicType.Number || exprType == BasicType.Boolean) return;
-            throw new Exception("Type error");
+            if (seedSpecified)
+            {
+                exprType = seedExpression.GetBasicType();
+                if (exprType == BasicType.Number || exprType == BasicType.Boolean) return;
+                throw new Exception("Type error");
+            }
         }
 
         public override void Emit(ILGenerator gen)

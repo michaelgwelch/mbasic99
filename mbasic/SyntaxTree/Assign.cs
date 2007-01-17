@@ -55,10 +55,9 @@ namespace mbasic.SyntaxTree
 
         public override void CheckTypes()
         {
-            Type varType = locals[localIndex].LocalType;
-            BasicType varBasicType;
-            if (varType == typeof(string)) varBasicType = BasicType.String;
-            else varBasicType = BasicType.Number;
+            Variable var = symbols[localIndex];
+            var.ConstrainType();
+            BasicType varBasicType = var.BasicType;
 
             valueType = value.GetBasicType();
 
