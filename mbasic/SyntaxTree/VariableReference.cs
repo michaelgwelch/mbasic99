@@ -26,52 +26,52 @@ using System.Reflection.Emit;
 
 namespace mbasic.SyntaxTree
 {
-    internal class VariableReference : Expression
+    internal class LocationReference : Expression
     {
-        int index; // index into variables symbol table
-        public VariableReference(int index, LineId line)
+        Location location;
+        public LocationReference(Location loc, LineId line)
             : base(line)
         {
-            this.index = index;
+            this.location = loc;
+            loc.ConstrainType(symbols);
         }
 
-        public int SymbolIndex { get { return index; } }
+        public Location Location { get { return location; } }
 
         public override void Emit(ILGenerator gen)
         {
-            if (index < 255)
-            {
-                switch (index)
-                {
-                    case 0:
-                        gen.Emit(OpCodes.Ldloc_0);
-                        break;
-                    case 1:
-                        gen.Emit(OpCodes.Ldloc_1);
-                        break;
-                    case 2:
-                        gen.Emit(OpCodes.Ldloc_2);
-                        break;
-                    case 3:
-                        gen.Emit(OpCodes.Ldloc_3);
-                        break;
-                    default:
-                        gen.Emit(OpCodes.Ldloc_S, locals[index]);
-                        break;
+            location.EmitLoad(gen, locals);
+            //if (index < 255)
+            //{
+            //    switch (index)
+            //    {
+            //        case 0:
+            //            gen.Emit(OpCodes.Ldloc_0);
+            //            break;
+            //        case 1:
+            //            gen.Emit(OpCodes.Ldloc_1);
+            //            break;
+            //        case 2:
+            //            gen.Emit(OpCodes.Ldloc_2);
+            //            break;
+            //        case 3:
+            //            gen.Emit(OpCodes.Ldloc_3);
+            //            break;
+            //        default:
+            //            gen.Emit(OpCodes.Ldloc_S, locals[index]);
+            //            break;
                         
-                }
-            }
-            else
-            {
-                gen.Emit(OpCodes.Ldloc, locals[index]);
-            }
+            //    }
+            //}
+            //else
+            //{
+            //    gen.Emit(OpCodes.Ldloc, locals[index]);
+            //}
         }
 
         public override BasicType GetBasicType()
         {
-            Variable var = symbols[index];
-            if (var.BasicType == BasicType.Unknown) var.SetBasicType();
-            return var.BasicType;
+            return location.BasicType;
         }
     }
 }

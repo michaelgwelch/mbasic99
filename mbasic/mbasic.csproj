@@ -33,8 +33,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ArrayElement.cs" />
     <Compile Include="Lexer.cs" />
     <Compile Include="LineId.cs" />
+    <Compile Include="Location.cs" />
     <Compile Include="Parser.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -56,7 +58,6 @@
     <Compile Include="SyntaxTree\Gosub.cs" />
     <Compile Include="SyntaxTree\Goto.cs" />
     <Compile Include="SyntaxTree\If.cs" />
-    <Compile Include="SyntaxTree\Increment.cs" />
     <Compile Include="SyntaxTree\Input.cs" />
     <Compile Include="SyntaxTree\LessThan.cs" />
     <Compile Include="SyntaxTree\Multiply.cs" />
@@ -80,6 +81,7 @@
     <Compile Include="SyntaxTree\StringLiteral.cs" />
     <Compile Include="Token.cs" />
     <Compile Include="Variable.cs" />
+    <Compile Include="VariableLocation.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TiBasicRuntime\TiBasicRuntime.csproj">
@@ -88,6 +90,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\samples\array.mbas">
+      <Link>samples\array.mbas</Link>
+    </None>
     <None Include="..\samples\data.mbas">
       <Link>samples\data.mbas</Link>
     </None>
@@ -111,6 +116,9 @@
     </None>
     <None Include="..\samples\secretnum.mbas">
       <Link>samples\secretnum.mbas</Link>
+    </None>
+    <None Include="..\samples\testPrint.mbas">
+      <Link>samples\testPrint.mbas</Link>
     </None>
     <None Include="..\samples\testPrint.py">
       <Link>samples\testPrint.py</Link>

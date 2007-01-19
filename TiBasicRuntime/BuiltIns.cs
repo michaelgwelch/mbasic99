@@ -424,5 +424,13 @@ namespace TiBasicRuntime
             consoleValuesIndex++;
             return s;
         }
+
+        public static string[] CreateStringArray(int dimension)
+        {
+            // by default we use Option Base 0 so there should be dimension + 1 elements in the array
+            string[] retVal = new string[dimension + 1];
+            for (int i = 0; i < retVal.Length; i++) retVal[i] = "";
+            return retVal;
+        }
     }
 }

@@ -72,6 +72,7 @@ namespace mbasic.SyntaxTree
         public override void CheckTypes()
         {
             inputPrompt.CheckTypes();
+            foreach (Assign assign in inputs) assign.CheckTypes();
         }
 
     }

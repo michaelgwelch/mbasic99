@@ -29,14 +29,26 @@ namespace mbasic.SyntaxTree
 {
     class Assign : Statement
     {
-        int localIndex;
+        // constant strings that represent either an INPUT or a READ statement.
+        private const string readExpr = "read";
+        private const string inputExpr = "input";
+        Location location;
         Expression value;
         BasicType valueType;
-        public Assign(int index, Expression value, LineId line)
+        string builtIn;
+        public Assign(Location loc, Expression value, LineId line)
             : base(line)
         {
-            this.localIndex = index;
+            this.location = loc;
             this.value = value;
+        }
+
+        private Assign(Location loc, string builtIn, LineId line)
+            : base(line)
+        {
+            this.location = loc;
+            this.value = null;
+            this.builtIn = builtIn;
         }
 
         public override void Emit(ILGenerator gen)
@@ -48,20 +60,36 @@ namespace mbasic.SyntaxTree
         {
             if (!labelSetAlready) MarkLabel(gen);
             MarkSequencePoint(gen);
-            value.Emit(gen);
-            if (valueType == BasicType.Boolean) EmitConvertToDouble(gen);
-            gen.Emit(OpCodes.Stloc, locals[localIndex]);
+
+            location.EmitStore(gen, locals, value);
+            return;
         }
 
         public override void CheckTypes()
         {
-            Variable var = symbols[localIndex];
-            var.ConstrainType();
-            BasicType varBasicType = var.BasicType;
+            location.ConstrainType(symbols);
+            BasicType locationType = location.BasicType;
+            if (locationType != BasicType.String && locationType != BasicType.Number
+                && locationType != BasicType.Boolean) throw new Exception("type error");
+
+            if (builtIn != null)
+            {
+                switch (builtIn)
+                {
+                    case readExpr:
+                        value = (locationType == BasicType.String) ?
+                            BuiltInsMethodCall.ReadStringFromData() : BuiltInsMethodCall.ReadNumberFromData();
+                        break;
+                    case inputExpr:
+                        value = (locationType == BasicType.String) ?
+                            BuiltInsMethodCall.ReadStringFromConsole() : BuiltInsMethodCall.ReadNumberFromConsole();
+                        break;
+                }
+            }
 
             valueType = value.GetBasicType();
 
-            if (varBasicType == BasicType.String && valueType == BasicType.String) return;
+            if (locationType == BasicType.String && valueType == BasicType.String) return;
 
             if (valueType == BasicType.Number || valueType == BasicType.Boolean) return;
 
@@ -70,24 +98,14 @@ namespace mbasic.SyntaxTree
         }
 
 
-        public static Assign ReadStringFromData(int symbolIndex, LineId line)
+        public static Assign ReadData(Location loc, LineId line)
         {
-            return new Assign(symbolIndex, BuiltInsMethodCall.ReadStringFromData(), line);
+            return new Assign(loc, readExpr, line);
         }
 
-        public static Assign ReadNumberFromData(int symbolIndex, LineId line)
+        public static Assign ReadConsole(Location loc, LineId line)
         {
-            return new Assign(symbolIndex, BuiltInsMethodCall.ReadNumberFromData(), line);
-        }
-
-        public static Assign ReadStringFromConsole(int symbolIndex, LineId line)
-        {
-            return new Assign(symbolIndex, BuiltInsMethodCall.ReadStringFromConsole(), line);
-        }
-
-        public static Assign ReadNumberFromConsole(int symbolIndex, LineId line)
-        {
-            return new Assign(symbolIndex, BuiltInsMethodCall.ReadNumberFromConsole(), line);
+            return new Assign(loc, inputExpr, line);
         }
 
     }

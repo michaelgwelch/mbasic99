@@ -19,8 +19,7 @@ namespace mbasic.SyntaxTree
 
         public override void CheckTypes()
         {
-            // Nothing to do. The parser creates assigns that have matching
-            // variables and value types.
+            foreach (Assign assign in assignments) assign.CheckTypes();
         }
 
         public override void Emit(ILGenerator gen, bool labelSetAlready)

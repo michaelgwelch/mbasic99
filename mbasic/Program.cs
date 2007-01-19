@@ -56,10 +56,10 @@ namespace mbasic
             SortedList<string, object[]> data = new SortedList<string, object[]>(); // a list used to contain all the statid DATA data.
             Parser parser = new Parser(stream, symbols, data);
             Node.lexer = parser.lexer;
+            Node.symbols = symbols;
 
             Statement n = parser.Parse();
 
-            Node.symbols = symbols;
             AppDomain domain = AppDomain.CurrentDomain;
             AssemblyName name = new AssemblyName(assemblyName);
             AssemblyBuilder bldr = domain.DefineDynamicAssembly(name, AssemblyBuilderAccess.RunAndSave);
@@ -96,25 +96,21 @@ namespace mbasic
 
             foreach (Variable v in symbols.Variables)
             {
-                LocalBuilder local;
-                if (v.BasicType == BasicType.String) locals.Add(local = gen.DeclareLocal(typeof(string)));
-                else locals.Add(local = gen.DeclareLocal(typeof(double)));
+                
+                LocalBuilder local = v.EmitDeclare(gen);
                 if (debug) local.SetLocalSymInfo(v.Value);
+                locals.Add(local);
             }
             Node.locals = locals;
 
 
             n.RecordLabels(gen);
 
-            #region Initialize strings to String.Empty
+            #region Initialize locals
 
-            foreach (LocalBuilder local in locals)
+            for (int i = 0; i < symbols.Count; i++)
             {
-                if (local.LocalType == typeof(string))
-                {
-                    gen.Emit(OpCodes.Ldstr, String.Empty);
-                    gen.Emit(OpCodes.Stloc, local);
-                }
+                symbols[i].EmitDefaultValue(gen, locals[i]);
             }
 
             #endregion Intialize strings

@@ -36,7 +36,7 @@ namespace mbasic.SyntaxTree
 
         public override void Emit(ILGenerator gen)
         {
-            new VariableReference(index, line).Emit(gen);
+            new LocationReference(index, line).Emit(gen);
             gen.Emit(OpCodes.Ldc_R8, 1.0);
             gen.Emit(OpCodes.Add);
         }

@@ -17,6 +17,8 @@ namespace mbasic.SyntaxTree
             builtInsType.GetMethod("ReadStringFromConsole");
         private static readonly MethodInfo readNumberFromConsole =
             builtInsType.GetMethod("ReadNumberFromConsole");
+        private static readonly MethodInfo createStringArray =
+            builtInsType.GetMethod("CreateStringArray");
 
         private MethodInfo method;
         private BasicType type;
@@ -56,6 +58,11 @@ namespace mbasic.SyntaxTree
         public static BuiltInsMethodCall ReadNumberFromConsole()
         {
             return new BuiltInsMethodCall(readNumberFromConsole);
+        }
+
+        public static BuiltInsMethodCall CreateStringArray()
+        {
+            return new BuiltInsMethodCall(createStringArray);
         }
 
     }
