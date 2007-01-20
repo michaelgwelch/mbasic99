@@ -33,14 +33,11 @@ namespace mbasic
         string name;
         int size; // only used for arrays
         BasicType dataType; // The TI BASIC data type
-        public Variable(string val) : this(val, -1)
-        {
-        }
 
-        public Variable(string name, int size)
+        public Variable(string name) 
         {
             this.name = name;
-            this.size = size;
+            this.size = -1;
             dataType = BasicType.Unknown;
         }
 
@@ -77,9 +74,10 @@ namespace mbasic
 
         public string Value { get { return name; } }
 
-        public static Variable CreateArrayVariable(string name, int size)
+        public void Dimension(int size)
         {
-            return new Variable(name, size);
+            if (this.size != -1) throw new Exception(String.Format("Array variable {0} used before it was DIMensioned", name));
+            this.size = size;
         }
 
         public LocalBuilder EmitDeclare(ILGenerator gen)

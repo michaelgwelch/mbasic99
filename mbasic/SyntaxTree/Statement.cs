@@ -63,5 +63,22 @@ namespace mbasic.SyntaxTree
         {
             Emit(gen, false);
         }
-    }
+
+        public static readonly Statement Empty = EmptyStatement.Instance;
+
+        private class EmptyStatement : Statement
+        {
+            public static readonly EmptyStatement Instance = new EmptyStatement();
+            private EmptyStatement() : base(LineId.None) { }
+
+
+            public override void CheckTypes()
+            {
+            }
+
+            public override void Emit(ILGenerator gen, bool labelSetAlready)
+            {
+            }
+        }
+}
 }

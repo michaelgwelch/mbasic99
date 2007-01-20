@@ -38,6 +38,7 @@ internal enum Token
     And         = 256,
     Call,
     Data,
+    Dim,
     Else,
     End, // used for keywords END and STOP
     EndOfLine,

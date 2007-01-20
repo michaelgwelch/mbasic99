@@ -200,6 +200,7 @@ namespace mbasic
             symbols.ReserveWord("CALL", Token.Call);
             symbols.ReserveWord("CLEAR", Token.Subroutine);
             symbols.ReserveWord("DATA", Token.Data);
+            symbols.ReserveWord("DIM", Token.Dim);
             symbols.ReserveWord("DISPLAY", Token.Print);
             symbols.ReserveWord("ELSE", Token.Else);
             symbols.ReserveWord("END", Token.End);

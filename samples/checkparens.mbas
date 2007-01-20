@@ -1,0 +1,57 @@
+100 REM Checks a string for matching brackets
+101 REM '(', ')', '[', ']', '{', '}'
+
+108 DIM STACK$(100)
+
+109 REM Initialize Stack
+110 GOSUB 1000
+130 INPUT "String: ":STRING$
+
+140 FOR I = 1 TO LEN(STRING$)
+150 CHAR$ = SEG$(STRING$, I, 1)
+151 STACKVAL$ = CHAR$
+155 LEFTBRACKET = (CHAR$="(") + (CHAR$="[") + (CHAR$="{")
+156 RIGHTBRACKET = (CHAR$=")") + (CHAR$="]") + (CHAR$="}")
+160 IF LEFTBRACKET THEN 180
+170 IF RIGHTBRACKET THEN 190
+175 GOTO 250
+180 GOSUB 2000
+185 GOTO 250
+190 GOSUB 3000
+195 MATCH = ((STACKVAL$="(")*(CHAR$=")") + (STACKVAL$="[")*(CHAR$="]") + (STACKVAL$="{")*(CHAR$="}"))
+200 IF MATCH=0 THEN 300
+250 NEXT I
+260 GOSUB 4000
+270 IF STACKCOUNT<>0 THEN 300
+280 PRINT "Match"
+290 GOTO 301
+300 PRINT "No match detected at pos "&STR$(I)
+301 INPUT "Another String (Y or N): ":AGAIN$
+302 IF (AGAIN$="Y") THEN 110
+310 END
+
+999  REM SUBROUTINE 1000 Initializes the stack to be empty
+1000 STACKIDX = -1
+1010 STACKVAL$ = ""
+1020 RETURN
+
+1999 REM This subroutine pushes STACKVAL$ onto stack
+2000 STACKIDX = STACKIDX + 1
+2010 STACK$(STACKIDX) = STACKVAL$
+2020 RETURN
+
+3000 REM This subroutine pops a value off of the stack
+3010 REM and puts it into variable STACKVAL$. If the
+3020 REM stack is empty then STACKVAL$ will get the empty string
+3030 IF (STACKIDX > -1) THEN 3060
+3040 STACKVAL$ = ""
+3050 GOTO 3080
+3060 STACKVAL$ = STACK$(STACKIDX)
+3070 STACKIDX = STACKIDX - 1
+3080 RETURN
+
+4000 REM This routine updates STACKCOUNT with the number
+4010 REM of items in the STACK. STACKCOUNT is only reliable
+4020 REM if this subroutine is called before inspecting it.
+4030 STACKCOUNT = STACKIDX + 1
+4040 RETURN

@@ -117,10 +117,38 @@ namespace mbasic
                 case Token.Return:
                     retVal = ReturnStatement();
                     break;
+                case Token.Dim:
+                    retVal = DimStatement();
+                    break;
 
             }
             Match(Token.EndOfLine);
             return retVal;
+        }
+
+        private Statement DimStatement()
+        {
+            LineId line = lexer.LineId;
+            Match(Token.Dim);
+            
+            ArrayDeclaration();
+            while (lookahead == Token.Comma)
+            {
+                Match(Token.Comma);
+                ArrayDeclaration();
+            }
+            return mbasic.SyntaxTree.Statement.Empty;
+        }
+
+        private void ArrayDeclaration()
+        {
+            int index = lexer.SymbolIndex;
+            Match(Token.Variable);
+            Match(Token.LeftParen);
+            int dimension = (int) lexer.NumericValue;
+            Match(Token.Number);
+            Match(Token.RightParen);
+            symbols[index].Dimension(dimension);
         }
 
         private Statement RemarkStatement()
