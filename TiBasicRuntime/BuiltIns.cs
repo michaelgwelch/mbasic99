@@ -121,7 +121,7 @@ namespace TiBasicRuntime
 
         public static string Str(double val)
         {
-            return val.ToString();
+            return Radix100.FromDouble(val).ToString();
         }
 
         public static double Val(string label, string s)
