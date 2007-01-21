@@ -343,10 +343,16 @@ namespace mbasic
             Match(Token.Variable);
             if (lookahead == Token.LeftParen)
             {
+                List<Expression> exprs = new List<Expression>();
                 Match(Token.LeftParen);
-                Expression expr = Expression();
+                exprs.Add(Expression());
+                while (lookahead == Token.Comma)
+                {
+                    Match(Token.Comma);
+                    exprs.Add(Expression());
+                }
                 Match(Token.RightParen);
-                return new ArrayElement(location, expr);
+                return new ArrayElement(location, exprs.ToArray());
             }
             else return location;
         }

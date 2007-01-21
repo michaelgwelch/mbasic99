@@ -93,6 +93,18 @@
     <None Include="..\samples\array.mbas">
       <Link>samples\array.mbas</Link>
     </None>
+    <None Include="..\samples\array2.mbas">
+      <Link>samples\array2.mbas</Link>
+    </None>
+    <None Include="..\samples\array3.mbas">
+      <Link>samples\array3.mbas</Link>
+    </None>
+    <None Include="..\samples\checkparens.mbas">
+      <Link>samples\checkparens.mbas</Link>
+    </None>
+    <None Include="..\samples\codebreaker.mbas">
+      <Link>samples\codebreaker.mbas</Link>
+    </None>
     <None Include="..\samples\data.mbas">
       <Link>samples\data.mbas</Link>
     </None>

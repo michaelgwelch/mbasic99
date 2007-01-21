@@ -22,6 +22,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Collections;
 
 namespace TiBasicRuntime
 {
@@ -425,12 +426,64 @@ namespace TiBasicRuntime
             return s;
         }
 
-        public static string[] CreateStringArray(int dimension)
+        private static int optionBase = 0;
+        private static bool optionBaseSet = false;
+
+        public static void OptionBase(int optionBase)
         {
-            // by default we use Option Base 0 so there should be dimension + 1 elements in the array
-            string[] retVal = new string[dimension + 1];
-            for (int i = 0; i < retVal.Length; i++) retVal[i] = "";
+            if (optionBaseSet) throw new InvalidOperationException("Option Base already set");
+            if (optionBase != 0 && optionBase != 1) throw new InvalidOperationException("Option Base must be 0 or 1");
+            BuiltIns.optionBase = optionBase;
+            BuiltIns.optionBaseSet = true;
+        }
+
+        public static Array CreateNumberArray(params int[] dimensions)
+        {
+            return CreateArray(dimensions, typeof(double));
+        }
+
+        public static Array CreateStringArray(params int[] dimensions)
+        {
+            Array retVal = CreateArray(dimensions, typeof(string));
+
+            int firstDimensionUpperBound = retVal.GetUpperBound(0);
+            int secondDimensionUpperBound = (dimensions.Length > 1) ? retVal.GetUpperBound(1) : 0;
+            int thirdDimensionUpperBound = (dimensions.Length > 2) ? retVal.GetUpperBound(2) : 0;
+            for (int i = optionBase; i <= firstDimensionUpperBound; i++)
+            {
+                if (dimensions.Length == 1) retVal.SetValue("", i);
+                else
+                {
+                    for (int j = optionBase; j <= secondDimensionUpperBound; j++)
+                    {
+                        if (dimensions.Length == 2) retVal.SetValue("", i, j);
+                        else
+                        {
+                            for (int k = optionBase; k <= thirdDimensionUpperBound; k++)
+                                retVal.SetValue("", i, j, k);
+                        }
+                    }
+                }
+            }
             return retVal;
+        }
+
+        private static Array CreateArray(int[] dimensions, Type elementType)
+        {
+            optionBaseSet = true;
+            int[] lowerBounds = new int[dimensions.Length];
+            for (int i = 0; i < lowerBounds.Length; i++) lowerBounds[i] = optionBase;
+
+            int[] lengths;
+            if (optionBase == 1) lengths = dimensions;
+            else
+            {
+                lengths = new int[dimensions.Length];
+                for (int i = 0; i < lengths.Length; i++) lengths[i] = dimensions[i] + 1;
+            }
+
+            Array newArr = Array.CreateInstance(elementType, lengths, lowerBounds);
+            return newArr;
         }
     }
 }

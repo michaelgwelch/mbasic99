@@ -1,0 +1,21 @@
+99 REM Page II-109 of User's Guide
+100 REM Multiplication Table
+110 Call Clear
+150 For A=1 To 5
+160 For B=1 To 5
+170 M(A,B)=A*B
+180 Next B
+190 Next A
+200 For A = 1 To 5
+210 For B = 1 To 5
+220 PRINT M(A,B);
+230 IF B<>1 Then 250
+240 Print "|";" ";
+250 Next B
+260 Print
+270 Rem The following statements print the lines defining the table
+280 If A<>1 then 330
+290 Print
+300 Print "~~~~~~~~~~~~~~~~~~"
+330 Next A
+340 End

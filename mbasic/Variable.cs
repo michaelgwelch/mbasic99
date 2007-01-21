@@ -31,27 +31,32 @@ namespace mbasic
     class Variable
     {
         string name;
-        int size; // only used for arrays
+        int[] dimensions; // only used for arrays
         BasicType dataType; // The TI BASIC data type
+        Type clrArrayType;
 
         public Variable(string name) 
         {
             this.name = name;
-            this.size = -1;
+            this.dimensions = null;
             dataType = BasicType.Unknown;
         }
 
         public BasicType BasicType { get { return dataType; } }
 
-        public void SetBasicType(bool isArray)
+        public void SetBasicType(bool isArray, int numDimensions)
         {
             if (dataType != BasicType.Unknown) throw new InvalidOperationException("Data type already set");
-            if (size != -1 && !isArray) throw new InvalidOperationException("Array variable being used as a scalar");
+            if (dimensions != null && !isArray) throw new InvalidOperationException("Array variable being used as a scalar");
 
             if (isArray)
             {
                 dataType = (name.Contains("$") ? BasicType.StringArray : BasicType.NumberArray);
-                if (size == -1) size = 10;
+                if (dimensions == null)
+                {
+                    dimensions = new int[numDimensions];
+                    for (int i = 0; i < numDimensions; i++) dimensions[i] = 10;
+                }
             }
             else dataType = (name.Contains("$") ? BasicType.String : BasicType.Number);
                 
@@ -59,25 +64,25 @@ namespace mbasic
 
         public void SetBasicType()
         {
-            SetBasicType(false);
+            SetBasicType(false, -1);
         }
 
-        public void ConstrainType(bool isArray)
+        public void ConstrainType(bool isArray, int numDimensions)
         {
-            if (dataType == BasicType.Unknown) SetBasicType(isArray);
+            if (dataType == BasicType.Unknown) SetBasicType(isArray, numDimensions);
         }
 
         public void ConstrainType()
         {
-            ConstrainType(false);
+            ConstrainType(false, -1);
         }
 
         public string Value { get { return name; } }
 
-        public void Dimension(int size)
+        public void Dimension(params int[] dims)
         {
-            if (this.size != -1) throw new Exception(String.Format("Array variable {0} used before it was DIMensioned", name));
-            this.size = size;
+            if (this.dimensions != null) throw new Exception(String.Format("Array variable {0} used before it was DIMensioned", name));
+            this.dimensions = dims;
         }
 
         public LocalBuilder EmitDeclare(ILGenerator gen)
@@ -89,13 +94,15 @@ namespace mbasic
                     local = gen.DeclareLocal(typeof(double));
                     break;
                 case BasicType.NumberArray:
-                    local = gen.DeclareLocal(typeof(double[]));
+                    clrArrayType = Type.GetType("System.Double[" + new String(',', dimensions.Length - 1) + "]");
+                    local = gen.DeclareLocal(clrArrayType);
                     break;
                 case BasicType.String:
                     local = gen.DeclareLocal(typeof(string));
                     break;
                 case BasicType.StringArray:
-                    local = gen.DeclareLocal(typeof(string[]));
+                    clrArrayType = Type.GetType("System.String[" + new String(',', dimensions.Length - 1) + "]");
+                    local = gen.DeclareLocal(clrArrayType);
                     break;
                 default:
                     throw new InvalidOperationException("type not defined for variable");
@@ -105,24 +112,31 @@ namespace mbasic
 
         public void EmitDefaultValue(ILGenerator gen, LocalBuilder local)
         {
-            switch (dataType)
+            if (dimensions != null)
             {
-                case BasicType.Number:
-                    gen.Emit(OpCodes.Ldc_R8, 0.0);
-                    break;
-                case BasicType.NumberArray:
-                    gen.Emit(OpCodes.Ldc_I4, size+1);
-                    gen.Emit(OpCodes.Newarr, typeof(double));
-                    break;
-                case BasicType.String:
-                    gen.Emit(OpCodes.Ldstr, "");
-                    break;
-                case BasicType.StringArray:
-                    gen.Emit(OpCodes.Ldc_I4, size);
-                    BuiltInsMethodCall.CreateStringArray().Emit(gen);
-                    break;
+                gen.Emit(OpCodes.Ldc_I4, dimensions.Length);
+                gen.Emit(OpCodes.Newarr, typeof(int));
+                for (int i = 0; i < dimensions.Length; i++)
+                {
+                    gen.Emit(OpCodes.Dup);
+                    gen.Emit(OpCodes.Ldc_I4, i);
+                    gen.Emit(OpCodes.Ldc_I4, dimensions[i]);
+                    gen.Emit(OpCodes.Stelem_I4);
+                }
+                if (dataType == BasicType.NumberArray) BuiltInsMethodCall.CreateNumberArray().Emit(gen);
+                else BuiltInsMethodCall.CreateStringArray().Emit(gen);
+                gen.Emit(OpCodes.Castclass, clrArrayType);
             }
-            gen.Emit(OpCodes.Stloc, local);
+            else
+            {
+                switch (dataType)
+                {
+                    case BasicType.String:
+                        gen.Emit(OpCodes.Ldstr, "");
+                        break;
+                }
+            }
+            if (dataType != BasicType.Number) gen.Emit(OpCodes.Stloc, local);
         }
 
     }

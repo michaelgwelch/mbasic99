@@ -21,16 +21,20 @@ namespace mbasic
             get { return basicType; }
         }
 
-        public override void ConstrainType(SymbolTable symbols, bool isArray)
+        public override void ConstrainType(SymbolTable symbols, bool isArray, int numDimensions)
         {
-            symbols[symbolIndex].ConstrainType(isArray);
+            symbols[symbolIndex].ConstrainType(isArray, numDimensions);
             basicType = symbols[symbolIndex].BasicType;
         }
 
         public override void EmitStore(ILGenerator gen, List<LocalBuilder> locals, Expression value)
         {
             value.Emit(gen);
-            if (basicType == BasicType.Boolean) gen.Emit(OpCodes.Conv_R8);
+            if (value.GetBasicType() == BasicType.Boolean)
+            {
+                gen.Emit(OpCodes.Conv_R8);
+                gen.Emit(OpCodes.Neg);
+            }
             gen.Emit(OpCodes.Stloc, locals[symbolIndex]);
         }
 
