@@ -4,11 +4,12 @@ using System.Text;
 using System.Reflection.Emit;
 using mbasic.SyntaxTree;
 using System.Reflection;
-
+using TiBasicRuntime;
 namespace mbasic
 {
     class ArrayElement : Location
     {
+    	static readonly Type builtInsType = typeof(BuiltIns);
         VariableLocation location;
         Expression[] exprs;
         MethodInfo getMethod; // The Get method for string or number array
@@ -27,13 +28,36 @@ namespace mbasic
                 BasicType indexType = expr.GetBasicType();
                 if (indexType != BasicType.Number && indexType != BasicType.Boolean) throw new Exception("type error");
             }
-            string commas = new String(',', exprs.Length - 1);
-            Type t;
-            if (location.BasicType == BasicType.StringArray) t = Type.GetType("System.String[" + commas + "]");
-            else t = Type.GetType("System.Double[" + commas + "]");
-
-            getMethod = t.GetMethod("Get");
-            setMethod = t.GetMethod("Set");
+            
+            
+			switch(exprs.Length)
+			{
+				case 1:
+					getMethod = (location.BasicType == BasicType.StringArray) ?
+						builtInsType.GetMethod("GetStringValue1") :
+						builtInsType.GetMethod("GetNumberValue1");
+					setMethod = (location.BasicType == BasicType.StringArray) ?
+						builtInsType.GetMethod("SetStringValue1") :
+						builtInsType.GetMethod("SetNumberValue1");
+					break;
+				case 2:
+					getMethod = (location.BasicType == BasicType.StringArray) ?
+						builtInsType.GetMethod("GetStringValue1") :
+						builtInsType.GetMethod("GetNumberValue1");
+					setMethod = (location.BasicType == BasicType.StringArray) ?
+						builtInsType.GetMethod("SetStringValue1") :
+						builtInsType.GetMethod("SetNumberValue1");
+					break;
+				case 3:
+					getMethod = (location.BasicType == BasicType.StringArray) ?
+						builtInsType.GetMethod("GetStringValue1") :
+						builtInsType.GetMethod("GetNumberValue1");
+					setMethod = (location.BasicType == BasicType.StringArray) ?
+						builtInsType.GetMethod("SetStringValue1") :
+						builtInsType.GetMethod("SetNumberValue1");
+					break;
+			}
+			
         }
 
         public override mbasic.SyntaxTree.BasicType BasicType

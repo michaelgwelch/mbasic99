@@ -128,7 +128,6 @@ namespace mbasic
 
         private Statement DimStatement()
         {
-            LineId line = lexer.LineId;
             Match(Token.Dim);
             
             ArrayDeclaration();
@@ -596,13 +595,6 @@ namespace mbasic
             Location location = Location();
             LocationReference var = new LocationReference(location, line);
             return var;
-        }
-
-
-        private Expression Negative()
-        {
-            Match(Token.Minus);
-            return new Negative(Expression(), lexer.LineId);
         }
 
         #endregion Expression Handling

@@ -69,11 +69,6 @@ namespace TiBasicRuntime
 
         }
 
-        private string NextString()
-        {
-            return NextString(true);
-        }
-
         private class Reader
         {
             int index = 0;
