@@ -25,13 +25,37 @@ using System.Text;
 using System.Reflection.Emit;
 namespace mbasic.SyntaxTree
 {
+    
     using LabelList = System.Collections.Generic.SortedList<string, Label>;
 
     abstract class Statement : Node
     {
+        const int defaultOptionBase = 0;
         Label lineLabel;        // A .NET label used to mark this location.
+        private static int optionBase;
+        private static bool optionBaseSet = false;
+        public static int OptionBase 
+        {
+            get { return optionBase; }
+            protected set
+            {
+                if (optionBaseSet) throw new InvalidOperationException("Option Base already set");
+                optionBase = value;
+                optionBaseSet = true;
+            }
+        }
 
-        protected Statement(LineId line) : base(line)
+        /// <summary>
+        /// If OptionBase is not set, this method
+        /// will cause the default to be used.
+        /// </summary>
+        protected static void ConstrainOptionBase()
+        {
+            if (!optionBaseSet) OptionBase = defaultOptionBase;
+        }
+
+        protected Statement(LineId line)
+            : base(line)
         {
         }
         public abstract void CheckTypes();
@@ -63,5 +87,7 @@ namespace mbasic.SyntaxTree
         {
             Emit(gen, false);
         }
+
+
     }
 }

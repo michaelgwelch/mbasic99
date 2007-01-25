@@ -22,6 +22,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Collections;
 
 namespace TiBasicRuntime
 {
@@ -120,7 +121,7 @@ namespace TiBasicRuntime
 
         public static string Str(double val)
         {
-            return val.ToString();
+            return Radix100.FromDouble(val).ToString();
         }
 
         public static double Val(string label, string s)
@@ -147,14 +148,14 @@ namespace TiBasicRuntime
 
 
 
-        public static void Trace(string label)
-        {
-            currentLabel = label;
-            if (trace) Console.Write(label);
-        }
+        //public static void Trace(string label)
+        //{
+        //    currentLabel = label;
+        //    if (trace) Console.Write(label);
+        //}
 
         static bool trace;
-        static string currentLabel;
+        //static string currentLabel;
         public static bool TraceEnabled
         {
             get
@@ -424,5 +425,136 @@ namespace TiBasicRuntime
             consoleValuesIndex++;
             return s;
         }
+
+        private static int optionBase = 0;
+        private static bool optionBaseSet = false;
+
+        public static void OptionBase(int optionBase)
+        {
+            if (optionBaseSet) throw new InvalidOperationException("Option Base already set");
+            if (optionBase != 0 && optionBase != 1) throw new InvalidOperationException("Option Base must be 0 or 1");
+            BuiltIns.optionBase = optionBase;
+            BuiltIns.optionBaseSet = true;
+        }
+
+        public static Array CreateNumberArray(params int[] dimensions)
+        {
+            return CreateArray(dimensions, typeof(double));
+        }
+
+        public static Array CreateStringArray(params int[] dimensions)
+        {
+            Array retVal = CreateArray(dimensions, typeof(string));
+
+            int firstDimensionUpperBound = retVal.GetUpperBound(0);
+            int secondDimensionUpperBound = (dimensions.Length > 1) ? retVal.GetUpperBound(1) : 0;
+            int thirdDimensionUpperBound = (dimensions.Length > 2) ? retVal.GetUpperBound(2) : 0;
+            for (int i = optionBase; i <= firstDimensionUpperBound; i++)
+            {
+                if (dimensions.Length == 1) retVal.SetValue("", i);
+                else
+                {
+                    for (int j = optionBase; j <= secondDimensionUpperBound; j++)
+                    {
+                        if (dimensions.Length == 2) retVal.SetValue("", i, j);
+                        else
+                        {
+                            for (int k = optionBase; k <= thirdDimensionUpperBound; k++)
+                                retVal.SetValue("", i, j, k);
+                        }
+                    }
+                }
+            }
+            return retVal;
+        }
+
+        private static Array CreateArray(int[] dimensions, Type elementType)
+        {
+            int[] lowerBounds = new int[dimensions.Length];
+            for (int i = 0; i < lowerBounds.Length; i++) lowerBounds[i] = optionBase;
+
+            int[] lengths;
+            if (optionBase == 1) lengths = dimensions;
+            else
+            {
+                lengths = new int[dimensions.Length];
+                for (int i = 0; i < lengths.Length; i++) lengths[i] = dimensions[i] + 1;
+            }
+
+            Array newArr = Array.CreateInstance(elementType, lengths, lowerBounds);
+            return newArr;
+        }
+        
+        #region Array Get and Set methods
+        
+        // These methods shouldn't be needed, but currently mono doesn't
+        // synthesis the Get and Set methods of arrays. So an alternative would
+        // be to use GetValue and SetValue but they only deal with objects, so
+        // doubles would need to be boxed and unboxed. These go away when the bug 
+        // is fixed. See http://bugzilla.ximian.com/show_bug.cgi?id=80567
+        
+        public static string GetStringValue1(string[] strings, int i)
+        {
+        	return strings[i];
+        }
+        
+        public static string GetStringValue2(string[,] strings, int i, int j)
+        {
+        	return strings[i,j];
+        }
+        
+        public static string GetStringValue3(string[,,] strings, int i, int j, int k)
+        {
+        	return strings[i,j,k];
+        }
+        
+        public static void SetStringValue1(string[] strings, int i, string value)
+        {
+        	strings[i] = value;
+        }
+        
+        public static void SetStringValue2(string[,] strings, int i, int j, string value)
+        {
+        	strings[i,j] = value;
+        }
+        
+        public static void SetStringValue3(string[,,] strings, int i, int j, int k, string value)
+        {
+        	strings[i,j,k] = value;
+        }
+ 
+ 		public static double GetNumberValue1(double[] doubles, int i)
+ 		{
+ 			return doubles[i];
+ 		}
+ 		
+ 		public static double GetNumberValue2(double[,] doubles, int i, int j)
+ 		{
+ 			return doubles[i,j];
+ 		}
+ 		
+ 		public static double GetNumberValue3(double[,,] doubles, int i, int j, int k)
+ 		{
+ 			return doubles[i,j,k];
+ 		}
+ 		
+ 		public static void SetNumberValue1(double[] nums, int i, double val)
+ 		{
+ 			nums[i] = val;
+ 		}
+ 		
+ 		public static void SetNumberValue2(double[,] nums, int i, int j, double val)
+ 		{
+ 			nums[i,j] = val;
+ 		}
+ 		
+ 		public static void SetNumberValue3(double[,,] nums, int i, int j, int k, double val)
+ 		{
+ 			nums[i,j,k] = val;
+ 		}
+ 		
+ 		
+ 		#endregion
+ 	
     }
 }

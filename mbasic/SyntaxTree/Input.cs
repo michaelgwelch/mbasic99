@@ -34,9 +34,9 @@ namespace mbasic.SyntaxTree
         private static readonly MethodInfo readLineMethod =
             typeof(BuiltIns).GetMethod("ReadLineFromConsoleIntoBuffer");
 
-        Assign[] inputs;
+        Block inputs;
         Print inputPrompt;
-        public Input(Expression inputPromptExpr, Assign[] inputs, LineId line)
+        public Input(Expression inputPromptExpr, Block inputs, LineId line)
             : base(line)
         {
             this.inputPrompt = new Print(
@@ -59,10 +59,7 @@ namespace mbasic.SyntaxTree
             gen.Emit(OpCodes.Ldc_I4, inputs.Length);
             gen.Emit(OpCodes.Call, readLineMethod); // reads a line from console into a buffer and checks to make sure number of values equals expected number of values.
 
-            foreach (Assign input in inputs)
-            {
-                input.Emit(gen, true);
-            }
+            inputs.Emit(gen, true);
 
             gen.BeginCatchBlock(typeof(InvalidCastException));
             gen.Emit(OpCodes.Leave, begin);
@@ -72,7 +69,9 @@ namespace mbasic.SyntaxTree
         public override void CheckTypes()
         {
             inputPrompt.CheckTypes();
+            inputs.CheckTypes();
         }
+
 
     }
 }

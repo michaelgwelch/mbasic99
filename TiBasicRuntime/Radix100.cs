@@ -241,7 +241,7 @@ namespace TiBasicRuntime
             return (byte)((number & digitMasks[bytePos]) >> (bytePos * 8));
         }
 
-        private static double GetMantissa10(Radix100 r)
+ /*       private static double GetMantissa10(Radix100 r)
         {
             double val = (double)r;
             double logValue = Math.Log(Math.Abs(val), 10);
@@ -250,6 +250,7 @@ namespace TiBasicRuntime
             double mantissa = val / divisor;
             return mantissa;
         }
+ */
 
         private static sbyte GetExponent(Radix100 r)
         {
@@ -366,7 +367,6 @@ namespace TiBasicRuntime
             if (Math.Sign(this) < 0) bldr.Append("-");
 
             Radix100 rounded = Radix100.Round(this, 10);
-            bool isInteger = IsInteger;
 
             sbyte exponent = GetExponent(this);
             string stringFormat = "##";

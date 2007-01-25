@@ -58,5 +58,6 @@ namespace mbasic.SyntaxTree
             foreach (Statement stmt in stmts) stmt.RecordLabels(gen);
         }
 
+        public int Length { get { return stmts.Count; } }
     }
 }

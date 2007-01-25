@@ -36,8 +36,10 @@ internal enum Token
     Divides     = '/',
     Semicolon   = ';',
     And         = 256,
+    Base,
     Call,
     Data,
+    Dim,
     Else,
     End, // used for keywords END and STOP
     EndOfLine,
@@ -59,6 +61,7 @@ internal enum Token
     NotEquals,
     Number,
     Or,
+    Option,
     Print,
     Randomize,
     Read,

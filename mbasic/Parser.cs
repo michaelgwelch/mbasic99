@@ -117,10 +117,63 @@ namespace mbasic
                 case Token.Return:
                     retVal = ReturnStatement();
                     break;
+                case Token.Dim:
+                    retVal = DimStatement();
+                    break;
+                case Token.Option:
+                    retVal = OptionBaseStatement();
+                    break;
 
             }
             Match(Token.EndOfLine);
             return retVal;
+        }
+
+        private Statement OptionBaseStatement()
+        {
+            Match(Token.Option);
+            Match(Token.Base);
+            int optionBase = (int)lexer.NumericValue;
+            if (optionBase != 0 && optionBase != 1) throw new Exception("Invalid Option Base");
+            Match(Token.Number);
+            return new OptionBaseStatement(optionBase);
+        }
+
+        private Statement DimStatement()
+        {
+            List<Statement> decls = new List<Statement>();
+
+            Match(Token.Dim);
+
+            decls.Add(ArrayDeclaration());
+            while (lookahead == Token.Comma)
+            {
+                Match(Token.Comma);
+                decls.Add(ArrayDeclaration());
+            }
+
+            return new Block(decls);
+        }
+
+        private ArrayDeclaration ArrayDeclaration()
+        {
+            List<int> dimensions = new List<int>();
+            int index = lexer.SymbolIndex;
+            Match(Token.Variable);
+            Match(Token.LeftParen);
+            dimensions.Add((int)lexer.NumericValue);
+            Match(Token.Number);
+            while (lookahead == Token.Comma)
+            {
+                Match(Token.Comma);
+                dimensions.Add((int)lexer.NumericValue);
+                Match(Token.Number);
+            }
+            Match(Token.RightParen);
+            
+            //symbols[index].Dimension(dimension);
+
+            return new ArrayDeclaration(index, dimensions.ToArray());
         }
 
         private Statement RemarkStatement()
@@ -182,24 +235,14 @@ namespace mbasic
         {
             Match(Token.Read);
             LineId line = lexer.LineId;
-            List<Assign> reads = new List<Assign>();
+            List<Statement> reads = new List<Statement>();
             while (lookahead != Token.EOF && lookahead != Token.EndOfLine)
             {
-                int symbolIndex = lexer.SymbolIndex;
-                symbols[symbolIndex].ConstrainType();
-                switch (symbols[symbolIndex].BasicType)
-                {
-                    case BasicType.Number:
-                        reads.Add(Assign.ReadNumberFromData(symbolIndex, line));
-                        break;
-                    case BasicType.String:
-                        reads.Add(Assign.ReadStringFromData(symbolIndex, line));
-                        break;
-                }
-                Match(Token.Variable);
+                Location loc = Location();
+                reads.Add(Assign.ReadData(loc, line));
                 if (lookahead == Token.Comma) Match(Token.Comma);
             }
-            return new Read(reads.ToArray(), line);
+            return new Read(new Block(reads), line);
         }
 
         private Statement DataStatement()
@@ -272,7 +315,7 @@ namespace mbasic
 
             LineId line = lexer.LineId;
             Match(Token.Input);
-            List<Assign> inputs = new List<Assign>();
+            List<Statement> inputs = new List<Statement>();
             Expression inputPrompt;
 
             // Assume that an input prompt is given and parse it as an expression
@@ -290,51 +333,53 @@ namespace mbasic
                 // treated as an Expression, but as an Assignment.
             {
                 inputPrompt = new StringLiteral("? ", LineId.None);
-                VariableReference vr = (VariableReference)expr; // The expr must have been a Variable Reference
-                int symbolIndex = vr.SymbolIndex;
-                symbols[symbolIndex].ConstrainType();
-                switch (symbols[symbolIndex].BasicType)
-                {
-                    case BasicType.Number:
-                        inputs.Add(Assign.ReadNumberFromConsole(symbolIndex, line));
-                        break;
-                    case BasicType.String:
-                        inputs.Add(Assign.ReadStringFromConsole(symbolIndex, line));
-                        break;
-                }
+                LocationReference vr = (LocationReference)expr; // The expr must have been a Location Reference
+                Location location = vr.Location;
+                inputs.Add(Assign.ReadConsole(location, line));
                 if (lookahead == Token.Comma) Match(Token.Comma);
             }
 
 
             while (lookahead != Token.EOF && lookahead != Token.EndOfLine)
             {
-                int symbolIndex = lexer.SymbolIndex;
-                symbols[symbolIndex].ConstrainType();
-                switch (symbols[symbolIndex].BasicType)
-                {
-                    case BasicType.Number:
-                        inputs.Add(Assign.ReadNumberFromConsole(symbolIndex, line));
-                        break;
-                    case BasicType.String:
-                        inputs.Add(Assign.ReadStringFromConsole(symbolIndex, line));
-                        break;
-                }
-                Match(Token.Variable);
+                Location location = Location();
+                inputs.Add(Assign.ReadConsole(location, line));
                 if (lookahead == Token.Comma) Match(Token.Comma);
             }
-            return new Input(inputPrompt, inputs.ToArray(), line);
+            return new Input(inputPrompt, new Block(inputs), line);
 
         }
 
         private Statement AssignStatement()
         {
             LineId line = lexer.LineId;
-            int index = lexer.SymbolIndex;
-            Match(Token.Variable);
+            Location loc = Location();
+
             Match(Token.Equals);
 
             Expression expr = Expression();
-            return new Assign(index, expr, line);
+            return new Assign(loc, expr, line);
+        }
+
+        private Location Location()
+        {
+            int index = lexer.SymbolIndex;
+            VariableLocation location = new VariableLocation(index);
+            Match(Token.Variable);
+            if (lookahead == Token.LeftParen)
+            {
+                List<Expression> exprs = new List<Expression>();
+                Match(Token.LeftParen);
+                exprs.Add(Expression());
+                while (lookahead == Token.Comma)
+                {
+                    Match(Token.Comma);
+                    exprs.Add(Expression());
+                }
+                Match(Token.RightParen);
+                return new ArrayElement(location, exprs.ToArray());
+            }
+            else return location;
         }
         #region Expression Handling
 
@@ -572,16 +617,10 @@ namespace mbasic
 
         Expression VariableReference()
         {
-            VariableReference var = new VariableReference(lexer.SymbolIndex, lexer.LineId);
-            Match(Token.Variable);
+            LineId line = lexer.LineId;
+            Location location = Location();
+            LocationReference var = new LocationReference(location, line);
             return var;
-        }
-
-
-        private Expression Negative()
-        {
-            Match(Token.Minus);
-            return new Negative(Expression(), lexer.LineId);
         }
 
         #endregion Expression Handling
@@ -669,8 +708,7 @@ namespace mbasic
             LineId line = lexer.LineId; // This is the line that the FOR key word is used on
             Match(Token.For);
 
-            int index = lexer.SymbolIndex;
-            Match(Token.Variable);      // This is the counting variable 
+            Location location = Location(); // this is the counting variable
 
             Match(Token.Equals);
 
@@ -689,9 +727,10 @@ namespace mbasic
             Match(Token.Next);
             Match(Token.Variable);
 
-            Assign init = new Assign(index, startVal, line);
-            Assign update = new Assign(index, new Increment(index, endLine), endLine);
-            Expression comparison = RelationalExpression.CompareLessThanEquals(new VariableReference(index, line), endVal, line);
+            Assign init = new Assign(location, startVal, line);
+            Assign update = new Assign(location, new Add(new LocationReference(location, endLine),
+                new NumberLiteral(1, endLine), endLine), endLine);
+            Expression comparison = RelationalExpression.CompareLessThanEquals(new LocationReference(location, line), endVal, line);
             return new For(init, comparison, update, block, line);
         }
 
