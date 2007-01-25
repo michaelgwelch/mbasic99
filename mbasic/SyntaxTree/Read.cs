@@ -9,9 +9,9 @@ namespace mbasic.SyntaxTree
 {
     class Read : Statement
     {
-        Assign[] assignments;
+        Block assignments;
 
-        public Read(Assign[] assignments, LineId line)
+        public Read(Block assignments, LineId line)
             : base(line)
         {
             this.assignments = assignments;
@@ -19,17 +19,14 @@ namespace mbasic.SyntaxTree
 
         public override void CheckTypes()
         {
-            foreach (Assign assign in assignments) assign.CheckTypes();
+            assignments.CheckTypes();
         }
 
         public override void Emit(ILGenerator gen, bool labelSetAlready)
         {
             if (!labelSetAlready) MarkLabel(gen);
             MarkSequencePoint(gen);
-            for (int i = 0; i < assignments.Length; i++)
-            {
-                assignments[i].Emit(gen, true);
-            }
+            assignments.Emit(gen, true);
         }
     }
 }
