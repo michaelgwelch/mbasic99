@@ -9,7 +9,7 @@ namespace mbasic
 {
     class ArrayElement : Location
     {
-    	static readonly Type builtInsType = typeof(BuiltIns);
+        static readonly Type builtInsType = typeof(BuiltIns);
         VariableLocation location;
         Expression[] exprs;
         MethodInfo getMethod; // The Get method for string or number array
@@ -28,41 +28,41 @@ namespace mbasic
                 BasicType indexType = expr.GetBasicType();
                 if (indexType != BasicType.Number && indexType != BasicType.Boolean) throw new Exception("type error");
             }
-            
-            
-			switch(exprs.Length)
-			{
-				case 1:
-					getMethod = (location.BasicType == BasicType.StringArray) ?
-						builtInsType.GetMethod("GetStringValue1") :
-						builtInsType.GetMethod("GetNumberValue1");
-					setMethod = (location.BasicType == BasicType.StringArray) ?
-						builtInsType.GetMethod("SetStringValue1") :
-						builtInsType.GetMethod("SetNumberValue1");
-					break;
-				case 2:
-					getMethod = (location.BasicType == BasicType.StringArray) ?
-						builtInsType.GetMethod("GetStringValue1") :
-						builtInsType.GetMethod("GetNumberValue1");
-					setMethod = (location.BasicType == BasicType.StringArray) ?
-						builtInsType.GetMethod("SetStringValue1") :
-						builtInsType.GetMethod("SetNumberValue1");
-					break;
-				case 3:
-					getMethod = (location.BasicType == BasicType.StringArray) ?
-						builtInsType.GetMethod("GetStringValue1") :
-						builtInsType.GetMethod("GetNumberValue1");
-					setMethod = (location.BasicType == BasicType.StringArray) ?
-						builtInsType.GetMethod("SetStringValue1") :
-						builtInsType.GetMethod("SetNumberValue1");
-					break;
-			}
-			
+
+
+            switch (exprs.Length)
+            {
+                case 1:
+                    getMethod = (location.BasicType == BasicType.StringArray) ?
+                        builtInsType.GetMethod("GetStringValue1") :
+                        builtInsType.GetMethod("GetNumberValue1");
+                    setMethod = (location.BasicType == BasicType.StringArray) ?
+                        builtInsType.GetMethod("SetStringValue1") :
+                        builtInsType.GetMethod("SetNumberValue1");
+                    break;
+                case 2:
+                    getMethod = (location.BasicType == BasicType.StringArray) ?
+                        builtInsType.GetMethod("GetStringValue2") :
+                        builtInsType.GetMethod("GetNumberValue2");
+                    setMethod = (location.BasicType == BasicType.StringArray) ?
+                        builtInsType.GetMethod("SetStringValue2") :
+                        builtInsType.GetMethod("SetNumberValue2");
+                    break;
+                case 3:
+                    getMethod = (location.BasicType == BasicType.StringArray) ?
+                        builtInsType.GetMethod("GetStringValue3") :
+                        builtInsType.GetMethod("GetNumberValue3");
+                    setMethod = (location.BasicType == BasicType.StringArray) ?
+                        builtInsType.GetMethod("SetStringValue3") :
+                        builtInsType.GetMethod("SetNumberValue3");
+                    break;
+            }
+
         }
 
         public override mbasic.SyntaxTree.BasicType BasicType
         {
-            get 
+            get
             {
                 switch (location.BasicType)
                 {

@@ -470,7 +470,6 @@ namespace TiBasicRuntime
 
         private static Array CreateArray(int[] dimensions, Type elementType)
         {
-            optionBaseSet = true;
             int[] lowerBounds = new int[dimensions.Length];
             for (int i = 0; i < lowerBounds.Length; i++) lowerBounds[i] = optionBase;
 

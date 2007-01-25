@@ -83,6 +83,7 @@ namespace mbasic
         {
             if (this.dimensions != null) throw new Exception(String.Format("Array variable {0} used before it was DIMensioned", name));
             this.dimensions = dims;
+            ConstrainType(true, dims.Length);
         }
 
         public LocalBuilder EmitDeclare(ILGenerator gen)

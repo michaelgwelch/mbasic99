@@ -33,7 +33,6 @@ namespace mbasic.SyntaxTree
             : base(line)
         {
             this.location = loc;
-            loc.ConstrainType(symbols);
         }
 
         public Location Location { get { return location; } }
@@ -71,6 +70,7 @@ namespace mbasic.SyntaxTree
 
         public override BasicType GetBasicType()
         {
+            location.ConstrainType(symbols);
             return location.BasicType;
         }
     }

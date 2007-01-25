@@ -107,7 +107,13 @@ namespace mbasic
             n.RecordLabels(gen);
 
             #region Initialize locals
-
+            // Emit a call to BuiltIns.OptionBase to set
+            // the option base at run-time of BASIC program
+            // this will be used for initializing all arrays
+            MethodInfo setOptionBaseMethod =
+                typeof(BuiltIns).GetMethod("OptionBase");
+            gen.Emit(OpCodes.Ldc_I4, Statement.OptionBase);
+            gen.Emit(OpCodes.Call, setOptionBaseMethod);
             for (int i = 0; i < symbols.Count; i++)
             {
                 symbols[i].EmitDefaultValue(gen, locals[i]);
@@ -197,6 +203,7 @@ namespace mbasic
         static private void InitializeReservedWords(SymbolTable symbols)
         {
             // Keywords for statements
+            symbols.ReserveWord("BASE", Token.Base);
             symbols.ReserveWord("CALL", Token.Call);
             symbols.ReserveWord("CLEAR", Token.Subroutine);
             symbols.ReserveWord("DATA", Token.Data);
@@ -212,6 +219,7 @@ namespace mbasic
             symbols.ReserveWord("INPUT", Token.Input);
             symbols.ReserveWord("LET", Token.Let);
             symbols.ReserveWord("NEXT", Token.Next);
+            symbols.ReserveWord("OPTION", Token.Option);
             symbols.ReserveWord("PRINT", Token.Print);
             symbols.ReserveWord("READ", Token.Read);
             symbols.ReserveWord("REM", Token.Remark);

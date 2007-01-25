@@ -120,34 +120,60 @@ namespace mbasic
                 case Token.Dim:
                     retVal = DimStatement();
                     break;
+                case Token.Option:
+                    retVal = OptionBaseStatement();
+                    break;
 
             }
             Match(Token.EndOfLine);
             return retVal;
         }
 
+        private Statement OptionBaseStatement()
+        {
+            Match(Token.Option);
+            Match(Token.Base);
+            int optionBase = (int)lexer.NumericValue;
+            if (optionBase != 0 && optionBase != 1) throw new Exception("Invalid Option Base");
+            Match(Token.Number);
+            return new OptionBaseStatement(optionBase);
+        }
+
         private Statement DimStatement()
         {
+            List<Statement> decls = new List<Statement>();
+
             Match(Token.Dim);
-            
-            ArrayDeclaration();
+
+            decls.Add(ArrayDeclaration());
             while (lookahead == Token.Comma)
             {
                 Match(Token.Comma);
-                ArrayDeclaration();
+                decls.Add(ArrayDeclaration());
             }
-            return mbasic.SyntaxTree.Statement.Empty;
+
+            return new Block(decls);
         }
 
-        private void ArrayDeclaration()
+        private ArrayDeclaration ArrayDeclaration()
         {
+            List<int> dimensions = new List<int>();
             int index = lexer.SymbolIndex;
             Match(Token.Variable);
             Match(Token.LeftParen);
-            int dimension = (int) lexer.NumericValue;
+            dimensions.Add((int)lexer.NumericValue);
             Match(Token.Number);
+            while (lookahead == Token.Comma)
+            {
+                Match(Token.Comma);
+                dimensions.Add((int)lexer.NumericValue);
+                Match(Token.Number);
+            }
             Match(Token.RightParen);
-            symbols[index].Dimension(dimension);
+            
+            //symbols[index].Dimension(dimension);
+
+            return new ArrayDeclaration(index, dimensions.ToArray());
         }
 
         private Statement RemarkStatement()
@@ -209,14 +235,14 @@ namespace mbasic
         {
             Match(Token.Read);
             LineId line = lexer.LineId;
-            List<Assign> reads = new List<Assign>();
+            List<Statement> reads = new List<Statement>();
             while (lookahead != Token.EOF && lookahead != Token.EndOfLine)
             {
                 Location loc = Location();
                 reads.Add(Assign.ReadData(loc, line));
                 if (lookahead == Token.Comma) Match(Token.Comma);
             }
-            return new Read(reads.ToArray(), line);
+            return new Read(new Block(reads), line);
         }
 
         private Statement DataStatement()
@@ -289,7 +315,7 @@ namespace mbasic
 
             LineId line = lexer.LineId;
             Match(Token.Input);
-            List<Assign> inputs = new List<Assign>();
+            List<Statement> inputs = new List<Statement>();
             Expression inputPrompt;
 
             // Assume that an input prompt is given and parse it as an expression
@@ -320,7 +346,7 @@ namespace mbasic
                 inputs.Add(Assign.ReadConsole(location, line));
                 if (lookahead == Token.Comma) Match(Token.Comma);
             }
-            return new Input(inputPrompt, inputs.ToArray(), line);
+            return new Input(inputPrompt, new Block(inputs), line);
 
         }
 
