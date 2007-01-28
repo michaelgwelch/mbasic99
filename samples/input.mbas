@@ -1,0 +1,7 @@
+100 INPUT A,B$
+110 PRINT A;B$
+115 INPUT "Hit Enter":B$
+116 A = LEN(B$)
+120 print len(c$)
+130 print d$
+140 e$ = d$
