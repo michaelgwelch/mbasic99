@@ -1,13 +1,12 @@
-import clr
-from System import *
-
+#!/usr/bin/env python
+from testCore import assertEquals
 lineNumber = 0
 def assertEquals(x):
 	global lineNumber
 	lineNumber = lineNumber + 1
-	input = Console.ReadLine()
-	if x.Equals(input): return
-	Console.WriteLine("Line {0}: '{1}' != '{2}'",lineNumber,x,input)
+	input = raw_input()
+	if (x == input): return
+	print "Line %d: '%s' != '%s'" % (lineNumber,x,input)
 # Page II-63
 assertEquals(" 2  4 ")
 assertEquals(" 6  7 ")

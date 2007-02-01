@@ -1,26 +1,13 @@
-import clr
-from System import *
+#!/usr/bin/env python
+from testCore import assertEquals
 
-lineNumber = 0
-def assertEquals(x):
-	global lineNumber
-	lineNumber = lineNumber + 1
-	input = Console.ReadLine()
-	if x.Equals(input): return
-	Console.WriteLine("Line {0}: '{1}' != '{2}'",lineNumber,x,input)
-
+# Scenarios from II-65
 assertEquals(" 10  20 ")
-
 assertEquals("TI COMPUTER")
-
 assertEquals("HELLO, FRIEND")
-
 assertEquals("HIJOAN")
-
 assertEquals("HI JOAN")
-
 assertEquals("HELLO JOAN")
-
 assertEquals(" 10.2 -30.5  16.7 ")
 assertEquals("-20.3 ")
 
@@ -75,4 +62,3 @@ assertEquals(" 75 ");
 assertEquals("HELLO");
 assertEquals("TO PRINT \"QUOTE MARKS\" YOU M")
 assertEquals("UST USE DOUBLE QUOTES.")
-Console.WriteLine("done")
