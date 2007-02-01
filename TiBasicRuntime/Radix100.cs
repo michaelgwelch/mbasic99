@@ -355,7 +355,8 @@ namespace TiBasicRuntime
             }
 
             bldr.Append("E");
-            if (decimalExponent > 99) bldr.Append(decimalExponent.ToString("+**;-**"));
+            if (decimalExponent > 99) bldr.Append("+**");
+            else if (decimalExponent < -99) bldr.Append("-**");
             else bldr.Append(decimalExponent.ToString("+00;-00"));
             return bldr.ToString();
 
