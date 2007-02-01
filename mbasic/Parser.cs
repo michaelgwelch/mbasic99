@@ -35,12 +35,10 @@ namespace mbasic
         public Lexer lexer;
         SortedList<string, object[]> data;
         Token lookahead;
-        SymbolTable symbols;
         public Parser(Stream stream, SymbolTable symbols, SortedList<string, object[]> data)
         {
             lexer = new Lexer(stream, symbols);
             this.data = data;
-            this.symbols = symbols;
         }
 
         public Statement Parse()
@@ -171,7 +169,6 @@ namespace mbasic
             }
             Match(Token.RightParen);
             
-            //symbols[index].Dimension(dimension);
 
             return new ArrayDeclaration(index, dimensions.ToArray());
         }
@@ -701,7 +698,6 @@ namespace mbasic
 
 
 
-        private void Error() { throw new Exception("Error during parsing"); }
 
         private Statement ForStatement()
         {
@@ -720,7 +716,6 @@ namespace mbasic
 
             Match(Token.EndOfLine);
 
-            LineId blockStart = lexer.LineId;
             Block block = Block(Token.Next);
 
             LineId endLine = lexer.LineId;  // This is the line that the NEXT keyword is used on

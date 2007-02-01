@@ -29,7 +29,6 @@ namespace mbasic.SyntaxTree
 {
     class Function : Expression
     {
-        private static readonly Type stringType = typeof(string);
         private static readonly Type numberType = typeof(double);
         private static readonly Type builtinsType = typeof(BuiltIns);
         private static readonly MethodInfo rndMethod =

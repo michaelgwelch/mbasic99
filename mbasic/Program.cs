@@ -42,7 +42,7 @@ namespace mbasic
         static void Main(string[] args)
         {
             bool debug = true;
-            bool runit = true;
+            bool runit = false;
 
             string fileName = args[0];
             string assemblyName = Path.GetFileNameWithoutExtension(fileName);
