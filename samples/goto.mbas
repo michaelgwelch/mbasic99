@@ -1,0 +1,13 @@
+ 99 REM Goto Test From Page II-49
+100 REM How many gifts on the 12 days of Christmas?
+110 Gifts = 0
+120 Days = 1
+130 Count = 0
+140 Count = Count + 1
+150 Gifts = Gifts + 1
+160 If Count = Days Then 180
+170 Goto 140
+180 Days = Days + 1
+190 If Days <= 12 Then 130
+200 Print "Total number of gifts is";Gifts
+210 End

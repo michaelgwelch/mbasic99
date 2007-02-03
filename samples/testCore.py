@@ -5,5 +5,5 @@ def assertEquals(x):
 	lineNumber = lineNumber + 1
 	input = raw_input()
 	if (x == input): return
-	print "Line %d: '%s' != '%s'" % (lineNumber,x,input)
+	print "Line %d: expected:'%s' != '%s'" % (lineNumber,x,input)
 

@@ -1,22 +1,28 @@
-90 REM gosub example
-100 for i = 1 to 3
-110 gosub 150
-120 print "i=";i
-130 next i
-131 gosub 1000
-140 stop
-150 rem subroutine
-160 for x = 1 to 2
-170 print "x=";x
-180 next x
-190 return
+90 REM gosub example from II-114
+100 REM Build an array, multiply each element by 3, print both arrays
+101 REM with modifications from book to remove randomness
+110 For X = 1 To 4
+120 For Y = 1 To 7
+130 I(X,Y) =  X * Y
+140 Next Y
+150 Next X
+160 Print "FIRST ARRAY"::
+170 Gosub 260
+180 For X = 1 To 4
+190 For Y = 1 To 7
+200 I(X,Y) = 3*I(X,Y)
+210 Next Y
+220 Next X
+230 PRINT "3 TIMES VALUES IN FIRST ARRAY"::
+240 Gosub 260
+250 STOP
+260 REM Subroutine to print array
+270 For X = 1 To 4
+280 For Y = 1 To 7
+290 Print I(X,Y);
+300 Next Y
+310 Print
+320 Next X
+330 Print
+340 Return
 
-1000 print "subroutine 1000 here."
-1020 if j = 0 then 1030 else 1040
-1030 gosub 2000
-1040 return
-
-2000 j = 1
-2010 print "subroutine 2000 here."
-2020 gosub 1000
-2030 return
