@@ -1,0 +1,13 @@
+99 REM From page II-50
+100 REM How does On-Goto work?
+110 Input X
+120 On X Goto 130,150,170,190,210
+130 Print "X=1"
+140 Goto 110
+150 Print "X=2"
+160 Goto 110
+170 Print "X=3"
+180 Goto 110
+190 Print "X=4"
+200 Goto 110
+210 End
