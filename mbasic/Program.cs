@@ -219,6 +219,7 @@ namespace mbasic
             symbols.ReserveWord("INPUT", Token.Input);
             symbols.ReserveWord("LET", Token.Let);
             symbols.ReserveWord("NEXT", Token.Next);
+            symbols.ReserveWrod("ON", Token.On);
             symbols.ReserveWord("OPTION", Token.Option);
             symbols.ReserveWord("PRINT", Token.Print);
             symbols.ReserveWord("READ", Token.Read);

@@ -60,6 +60,7 @@ internal enum Token
     Not,
     NotEquals,
     Number,
+    On,
     Or,
     Option,
     Print,
