@@ -59,6 +59,15 @@ namespace TiBasicRuntime
             return rand.NextDouble();
         }
 
+        /// <summary>
+        /// Rounds the specified value to nearest integer.
+        /// </summary>
+        /// <returns></returns>
+        public static int Round(double x)
+        {
+            return (int)Math.Round(x);
+        }
+
         public static double Int(double val)
         {
             return Math.Floor(val);
@@ -484,77 +493,11 @@ namespace TiBasicRuntime
             Array newArr = Array.CreateInstance(elementType, lengths, lowerBounds);
             return newArr;
         }
-        
-        #region Array Get and Set methods
-        
-        // These methods shouldn't be needed, but currently mono doesn't
-        // synthesis the Get and Set methods of arrays. So an alternative would
-        // be to use GetValue and SetValue but they only deal with objects, so
-        // doubles would need to be boxed and unboxed. These go away when the bug 
-        // is fixed. See http://bugzilla.ximian.com/show_bug.cgi?id=80567
-        
-        public static string GetStringValue1(string[] strings, int i)
+
+        public static void BadValueError(string label)
         {
-        	return strings[i];
+            throw new Exception("* BAD VALUE IN " + label);
         }
-        
-        public static string GetStringValue2(string[,] strings, int i, int j)
-        {
-        	return strings[i,j];
-        }
-        
-        public static string GetStringValue3(string[,,] strings, int i, int j, int k)
-        {
-        	return strings[i,j,k];
-        }
-        
-        public static void SetStringValue1(string[] strings, int i, string value)
-        {
-        	strings[i] = value;
-        }
-        
-        public static void SetStringValue2(string[,] strings, int i, int j, string value)
-        {
-        	strings[i,j] = value;
-        }
-        
-        public static void SetStringValue3(string[,,] strings, int i, int j, int k, string value)
-        {
-        	strings[i,j,k] = value;
-        }
- 
- 		public static double GetNumberValue1(double[] doubles, int i)
- 		{
- 			return doubles[i];
- 		}
- 		
- 		public static double GetNumberValue2(double[,] doubles, int i, int j)
- 		{
- 			return doubles[i,j];
- 		}
- 		
- 		public static double GetNumberValue3(double[,,] doubles, int i, int j, int k)
- 		{
- 			return doubles[i,j,k];
- 		}
- 		
- 		public static void SetNumberValue1(double[] nums, int i, double val)
- 		{
- 			nums[i] = val;
- 		}
- 		
- 		public static void SetNumberValue2(double[,] nums, int i, int j, double val)
- 		{
- 			nums[i,j] = val;
- 		}
- 		
- 		public static void SetNumberValue3(double[,,] nums, int i, int j, int k, double val)
- 		{
- 			nums[i,j,k] = val;
- 		}
- 		
- 		
- 		#endregion
- 	
+
     }
 }
