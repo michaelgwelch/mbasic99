@@ -21,6 +21,8 @@ namespace mbasic.SyntaxTree
             builtInsType.GetMethod("CreateStringArray");
         private static readonly MethodInfo createNumberArray =
             builtInsType.GetMethod("CreateNumberArray");
+        private static readonly MethodInfo badValueError =
+            builtInsType.GetMethod("BadValueError");
 
         private MethodInfo method;
         private BasicType type;
@@ -72,5 +74,9 @@ namespace mbasic.SyntaxTree
             return new BuiltInsMethodCall(createNumberArray);
         }
 
+        public static BuiltInsMethodCall BadValueError()
+        {
+            return new BuiltInsMethodCall(badValueError);
+        }
     }
 }

@@ -88,6 +88,7 @@ namespace mbasic
             Node.writer = mbldr.DefineDocument(fileName, Guid.Empty, Guid.Empty, Guid.Empty);
             Node.debug = debug;
             Node.labels = new LabelList();
+            n.RecordLabels(gen);
 
             n.CheckTypes();
             // Create local variables
@@ -104,7 +105,6 @@ namespace mbasic
             Node.locals = locals;
 
 
-            n.RecordLabels(gen);
 
             #region Initialize locals
             // Emit a call to BuiltIns.OptionBase to set
@@ -219,7 +219,7 @@ namespace mbasic
             symbols.ReserveWord("INPUT", Token.Input);
             symbols.ReserveWord("LET", Token.Let);
             symbols.ReserveWord("NEXT", Token.Next);
-            symbols.ReserveWrod("ON", Token.On);
+            symbols.ReserveWord("ON", Token.On);
             symbols.ReserveWord("OPTION", Token.Option);
             symbols.ReserveWord("PRINT", Token.Print);
             symbols.ReserveWord("READ", Token.Read);

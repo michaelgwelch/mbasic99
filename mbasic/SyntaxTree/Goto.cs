@@ -37,11 +37,12 @@ namespace mbasic.SyntaxTree
 
         public override void CheckTypes()
         {
-        }
-
-        public override void Emit(ILGenerator gen)
-        {
-            Emit(gen, false);
+            if (!labels.ContainsKey(destLabel))
+            {
+                throw new TypeCheckException(
+                    String.Format("Non existent line number {0} in Goto statement", destLabel),
+                    line);
+            }
         }
 
         public override void Emit(ILGenerator gen, bool labelSetAlready)

@@ -18,6 +18,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -26,6 +27,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -48,6 +50,7 @@
     <Compile Include="SyntaxTree\BinaryOperator.cs" />
     <Compile Include="SyntaxTree\Block.cs" />
     <Compile Include="SyntaxTree\BuiltInsMethodCall.cs" />
+    <Compile Include="SyntaxTree\CompilerException.cs" />
     <Compile Include="SyntaxTree\Concatenate.cs" />
     <Compile Include="SyntaxTree\Data.cs" />
     <Compile Include="SyntaxTree\Division.cs" />
@@ -66,6 +69,7 @@
     <Compile Include="SyntaxTree\NumberLiteral.cs" />
     <Compile Include="SyntaxTree\GreaterThan.cs" />
     <Compile Include="SyntaxTree\Node.cs" />
+    <Compile Include="SyntaxTree\OnGoto.cs" />
     <Compile Include="SyntaxTree\OptionBaseStatement.cs" />
     <Compile Include="SyntaxTree\Power.cs" />
     <Compile Include="SyntaxTree\Randomize.cs" />
@@ -78,6 +82,7 @@
     <Compile Include="SyntaxTree\Subroutine.cs" />
     <Compile Include="SyntaxTree\Subtract.cs" />
     <Compile Include="SyntaxTree\Tab.cs" />
+    <Compile Include="SyntaxTree\TypeCheckException.cs" />
     <Compile Include="SyntaxTree\VariableReference.cs" />
     <Compile Include="SyntaxTree\Print.cs" />
     <Compile Include="SyntaxTree\StringLiteral.cs" />

@@ -121,10 +121,32 @@ namespace mbasic
                 case Token.Option:
                     retVal = OptionBaseStatement();
                     break;
+                case Token.On:
+                    retVal = OnGotoStatement();
+                    break;
 
             }
             Match(Token.EndOfLine);
             return retVal;
+        }
+
+        private Statement OnGotoStatement()
+        {
+            LineId line = lexer.LineId;
+            Match(Token.On);
+            Expression expr = Expression();
+            Match(Token.Goto);
+
+            List<string> labelNumbers = new List<string>();
+            labelNumbers.Add(lexer.Value);
+            Match(Token.Number);
+            while (lookahead == Token.Comma)
+            {
+                Match(Token.Comma);
+                labelNumbers.Add(lexer.Value);
+                Match(Token.Number);
+            }
+            return new OnGoto(expr, labelNumbers, line);
         }
 
         private Statement OptionBaseStatement()
