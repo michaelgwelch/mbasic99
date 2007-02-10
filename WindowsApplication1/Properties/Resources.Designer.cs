@@ -66,12 +66,5 @@ namespace WindowsApplication1.Properties {
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
-        
-        internal static System.Drawing.Bitmap B {
-            get {
-                object obj = ResourceManager.GetObject("B", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
     }
 }

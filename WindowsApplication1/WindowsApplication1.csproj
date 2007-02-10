@@ -36,17 +36,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Screen.cs">
+    <Compile Include="CharacterBitmap.cs" />
+    <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Screen.Designer.cs">
-      <DependentUpon>Screen.cs</DependentUpon>
+    <Compile Include="Form1.Designer.cs">
+      <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Screen.resx">
+    <EmbeddedResource Include="Form1.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>Screen.cs</DependentUpon>
+      <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -67,6 +68,10 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="Screen.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="TIColor.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\vs0206dt\GaugeControlSolutionCSharp\WindowsControls\WindowsControls.csproj">
