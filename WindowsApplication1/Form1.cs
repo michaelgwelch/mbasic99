@@ -255,8 +255,8 @@ namespace WindowsApplication1
             screen1.Print("Hello, World!");
             screen1.Print("I'm a TI Basic Look alike");
 
-            screen1.Char((char)128, "1898FF3D3C3CE404");
-            screen1.Char((char)129, "1819FFBC3C3C2720");
+            screen1.CharacterDefinition((char)128, "1898FF3D3C3CE404");
+            screen1.CharacterDefinition((char)129, "1819FFBC3C3C2720");
             timer.Interval = 500;
             screen1.Color(13, TIColor.DarkRed, TIColor.White);
             timer.Tick += timer_Tick;
@@ -268,8 +268,8 @@ namespace WindowsApplication1
         bool image1 = false;
         void timer_Tick(object sender, EventArgs e)
         {
-            if (image1) screen1.VChar(12, 16, (char)128);
-            else screen1.VChar(12, 16, (char)129);
+            if (image1) screen1.VerticalCharacterRepeat(12, 16, (char)128);
+            else screen1.VerticalCharacterRepeat(12, 16, (char)129);
             image1 = !image1;
 
 
