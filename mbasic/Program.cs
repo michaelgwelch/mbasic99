@@ -32,8 +32,8 @@ using System.Diagnostics;
 namespace mbasic
 {
     using LabelList = System.Collections.Generic.SortedList<string, Label>;
-    using TiBasicRuntime;
-
+    using TIBasicRuntime;
+    using File = System.IO.File;
     class Program
     {
         static readonly MethodInfo popMethod =

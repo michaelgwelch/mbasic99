@@ -24,7 +24,7 @@ using System.Collections.Generic;
 using System.Text;
 using mbasic.SyntaxTree;
 using System.Reflection.Emit;
-using TiBasicRuntime;
+using TIBasicRuntime;
 
 namespace mbasic
 {

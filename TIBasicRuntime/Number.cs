@@ -99,6 +99,11 @@ namespace TIBasicRuntime
         #endregion Constructors
 
         #region Conversions Operators
+        public static Number FromInt64(long val)
+        {
+            return (Number)val;
+        }
+
         [CLSCompliant(false)]
         public static explicit operator Number(ulong nval)
         {

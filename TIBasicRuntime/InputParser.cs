@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 
-namespace TiBasicRuntime
+namespace TIBasicRuntime
 {
     /// <summary>
     /// Reads a line of input and breaks it into comma seperated values.

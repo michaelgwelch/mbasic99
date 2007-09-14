@@ -24,7 +24,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Collections;
 
-namespace TiBasicRuntime
+namespace TIBasicRuntime
 {
     public static class BuiltIns
     {

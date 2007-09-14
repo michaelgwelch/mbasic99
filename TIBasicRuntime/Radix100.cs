@@ -23,7 +23,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace TiBasicRuntime
+namespace TIBasicRuntime
 {
     public struct Radix100
     {
@@ -45,7 +45,32 @@ namespace TiBasicRuntime
         private readonly ulong val;
 
         private Radix100(UInt64 val) { this.val = val; }
+        [CLSCompliant(false)]
+        public Radix100(uint d)
+        {
+            // Let's retrieve the mantissa, exponent and sign in terms of Radix 100.
+            int sign = Math.Sign(d);
+            sbyte exponent = (sbyte)Math.Floor(Math.Log(Math.Abs(d), 100));
+            double mantissa = Math.Abs(d / Math.Pow(100, exponent));
 
+
+            ulong result = 0;
+            // set exponent properly
+            byte biasedExponent = BiasedExponentValue(exponent);
+            SetByte(ref result, 7, biasedExponent);
+
+            byte digit;
+
+            // loop through digits
+            for (int i = 6; i >= 0 && mantissa > 0; i--)
+            {
+                digit = (byte)Math.Truncate(mantissa);
+                SetByte(ref result, i, digit);
+                mantissa = (mantissa * 100) - (digit * 100);
+            }
+
+            this.val = result;
+        }
         public static double ToDouble(Radix100 r)
         {
             int expValue = GetExponent(r);
@@ -214,7 +239,7 @@ namespace TiBasicRuntime
 
 
         #region Helper functions, masks, constants,
-
+        [CLSCompliant(false)]
         public static byte BiasedExponentValue(sbyte normalizedExponent)
         {
             return (byte)(normalizedExponent + 0x40);
