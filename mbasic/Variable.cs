@@ -24,7 +24,8 @@ using System.Collections.Generic;
 using System.Text;
 using mbasic.SyntaxTree;
 using System.Reflection.Emit;
-using TIBasicRuntime;
+using TiBasicRuntime;
+using System.Reflection;
 
 namespace mbasic
 {
@@ -86,35 +87,38 @@ namespace mbasic
             ConstrainType(true, dims.Length);
         }
 
-        public LocalBuilder EmitDeclare(ILGenerator gen)
+        public static readonly FieldAttributes fieldAttributes =
+            FieldAttributes.Private;
+        public FieldBuilder EmitDeclare(TypeBuilder typeBldr)
         {
-            LocalBuilder local;
+            FieldBuilder field;
             switch (dataType)
             {
                 case BasicType.Number:
-                    local = gen.DeclareLocal(typeof(double));
+                    field = typeBldr.DefineField(this.name, typeof(double), fieldAttributes);
                     break;
                 case BasicType.NumberArray:
                     clrArrayType = Type.GetType("System.Double[" + new String(',', dimensions.Length - 1) + "]");
-                    local = gen.DeclareLocal(clrArrayType);
+                    field = typeBldr.DefineField(this.name, clrArrayType, fieldAttributes);
                     break;
                 case BasicType.String:
-                    local = gen.DeclareLocal(typeof(string));
+                    field = typeBldr.DefineField(this.name, typeof(string), fieldAttributes);
                     break;
                 case BasicType.StringArray:
                     clrArrayType = Type.GetType("System.String[" + new String(',', dimensions.Length - 1) + "]");
-                    local = gen.DeclareLocal(clrArrayType);
+                    field = typeBldr.DefineField(this.name, clrArrayType, fieldAttributes);
                     break;
                 default:
                     throw new InvalidOperationException("type not defined for variable");
             }
-            return local;
+            return field;
         }
 
-        public void EmitDefaultValue(ILGenerator gen, LocalBuilder local)
+        public void EmitDefaultValue(ILGenerator gen, FieldBuilder field)
         {
             if (dimensions != null)
             {
+                gen.Emit(OpCodes.Ldarg_0);
                 gen.Emit(OpCodes.Ldc_I4, dimensions.Length);
                 gen.Emit(OpCodes.Newarr, typeof(int));
                 for (int i = 0; i < dimensions.Length; i++)
@@ -133,11 +137,12 @@ namespace mbasic
                 switch (dataType)
                 {
                     case BasicType.String:
+                        gen.Emit(OpCodes.Ldarg_0);
                         gen.Emit(OpCodes.Ldstr, "");
                         break;
                 }
             }
-            if (dataType != BasicType.Number) gen.Emit(OpCodes.Stloc, local);
+            if (dataType != BasicType.Number) gen.Emit(OpCodes.Stfld, field);
         }
 
     }

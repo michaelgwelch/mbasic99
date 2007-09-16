@@ -24,7 +24,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Reflection.Emit;
 using System.Reflection;
-using TIBasicRuntime;
+using TiBasicRuntime;
 namespace mbasic.SyntaxTree
 {
     class Gosub : Statement

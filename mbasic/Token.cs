@@ -39,7 +39,6 @@ internal enum Token
     Base,
     Call,
     Data,
-    Def,
     Dim,
     Else,
     End, // used for keywords END and STOP
