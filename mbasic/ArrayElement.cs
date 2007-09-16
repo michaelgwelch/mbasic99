@@ -64,9 +64,9 @@ namespace mbasic
 
 
         public override void EmitStore(ILGenerator gen, 
-            List<LocalBuilder> locals, Expression value)
+            IList<FieldBuilder> fields, Expression value)
         {
-            this.location.EmitLoad(gen, locals);
+            this.location.EmitLoad(gen, fields);
             foreach (Expression expr in exprs)
             {
                 expr.Emit(gen);
@@ -81,9 +81,9 @@ namespace mbasic
             gen.Emit(OpCodes.Call, setMethod);
         }
 
-        public override void EmitLoad(ILGenerator gen, List<LocalBuilder> locals)
+        public override void EmitLoad(ILGenerator gen, IList<FieldBuilder> fields)
         {
-            this.location.EmitLoad(gen, locals);
+            this.location.EmitLoad(gen, fields);
             foreach (Expression expr in exprs)
             {
                 expr.Emit(gen);

@@ -33,7 +33,7 @@ using System.Reflection;
     internal abstract class Node
     {
         public static SymbolTable symbols;
-        public static List<LocalBuilder> locals;
+        public static List<FieldBuilder> fields;
         public static Lexer lexer;
         public static LabelList labels;
         public static List<Label> returnLabels = new List<Label>();// these are the labels that mark lines after gosub statements. 

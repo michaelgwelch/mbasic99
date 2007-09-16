@@ -61,7 +61,7 @@ namespace mbasic.SyntaxTree
             if (!labelSetAlready) MarkLabel(gen);
             MarkSequencePoint(gen);
 
-            location.EmitStore(gen, locals, value);
+            location.EmitStore(gen, fields, value);
             return;
         }
 

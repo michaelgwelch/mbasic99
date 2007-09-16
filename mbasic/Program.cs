@@ -42,7 +42,7 @@ namespace mbasic
         static void Main(string[] args)
         {
             bool debug = true;
-            bool runit = false;
+            bool runit = true;
 
             string fileName = args[0];
             string assemblyName = Path.GetFileNameWithoutExtension(fileName);
@@ -75,51 +75,43 @@ namespace mbasic
             }
             ModuleBuilder mbldr = bldr.DefineDynamicModule(moduleName, exeName, debug);
 
+
             TypeBuilder typeBuilder = mbldr.DefineType(assemblyName + ".Program", TypeAttributes.BeforeFieldInit 
-                | TypeAttributes.Sealed | TypeAttributes.AnsiClass | TypeAttributes.Abstract);
+                | TypeAttributes.Sealed | TypeAttributes.AnsiClass );
 
 
 
+            ConstructorBuilder defaultConstructor = typeBuilder.DefineConstructor(
+                MethodAttributes.Public, CallingConventions.Standard, null);
+            ILGenerator cgen = defaultConstructor.GetILGenerator();
+            cgen.Emit(OpCodes.Ldarg_0);
+            cgen.Emit(OpCodes.Call, typeof(System.Object).GetConstructor(new Type[0]));
+            cgen.Emit(OpCodes.Ret);
 
 
             MethodBuilder mthdbldr = typeBuilder.DefineMethod("Main", MethodAttributes.Static | MethodAttributes.Public);
+            MethodBuilder runbldr = typeBuilder.DefineMethod("Run", MethodAttributes.Private);
 
             ILGenerator gen = mthdbldr.GetILGenerator();
+            ILGenerator rgen = runbldr.GetILGenerator();
+
             Node.writer = mbldr.DefineDocument(fileName, Guid.Empty, Guid.Empty, Guid.Empty);
             Node.debug = debug;
             Node.labels = new LabelList();
-            n.RecordLabels(gen);
+            n.RecordLabels(rgen);
 
             n.CheckTypes();
-            // Create local variables
+            // Create fields 
 
-            List<LocalBuilder> locals = new List<LocalBuilder>();
+            List<FieldBuilder> fields = new List<FieldBuilder>();
 
             foreach (Variable v in symbols.Variables)
             {
                 
-                LocalBuilder local = v.EmitDeclare(gen);
-                if (debug) local.SetLocalSymInfo(v.Value);
-                locals.Add(local);
+                FieldBuilder field = v.EmitDeclare(typeBuilder);
+                fields.Add(field);
             }
-            Node.locals = locals;
-
-
-
-            #region Initialize locals
-            // Emit a call to BuiltIns.OptionBase to set
-            // the option base at run-time of BASIC program
-            // this will be used for initializing all arrays
-            MethodInfo setOptionBaseMethod =
-                typeof(BuiltIns).GetMethod("OptionBase");
-            gen.Emit(OpCodes.Ldc_I4, Statement.OptionBase);
-            gen.Emit(OpCodes.Call, setOptionBaseMethod);
-            for (int i = 0; i < symbols.Count; i++)
-            {
-                symbols[i].EmitDefaultValue(gen, locals[i]);
-            }
-
-            #endregion Intialize strings
+            Node.fields = fields;
 
             #region Create Static DATA data
             if (data.Count > 0)
@@ -155,39 +147,65 @@ namespace mbasic
             }
             #endregion
 
-            Node.returnSwitch = gen.DefineLabel();
+            #region Create Instance of Program and Invoke Run
+            gen.Emit(OpCodes.Newobj, defaultConstructor);
+            gen.Emit(OpCodes.Call, runbldr);
+            gen.Emit(OpCodes.Ret);
+            gen = null;
+            #endregion
+
+            #region Emit Run Method
+
+            #region Initialize fields
+            // Emit a call to BuiltIns.OptionBase to set
+            // the option base at run-time of BASIC program
+            // this will be used for initializing all arrays
+            MethodInfo setOptionBaseMethod =
+                typeof(BuiltIns).GetMethod("OptionBase");
+            rgen.Emit(OpCodes.Ldc_I4, Statement.OptionBase);
+            rgen.Emit(OpCodes.Call, setOptionBaseMethod);
+            for (int i = 0; i < symbols.Count; i++)
+            {
+                symbols[i].EmitDefaultValue(rgen, fields[i]);
+            }
+
+            #endregion Intialize fields
+
+
+
+            Node.returnSwitch = rgen.DefineLabel();
             // Emit try
-            Label end = gen.BeginExceptionBlock();
+            Label end = rgen.BeginExceptionBlock();
             Node.endLabel = end;
 
-            n.Emit(gen);
+            n.Emit(rgen);
 
             #region Emit Return Switch for GOSUB/RETURN
-            gen.MarkSequencePoint(Node.writer, Int32.MaxValue, -1, Int32.MaxValue, -1);
+            rgen.MarkSequencePoint(Node.writer, Int32.MaxValue, -1, Int32.MaxValue, -1);
 
-            Label exitLabel = gen.DefineLabel();
-            gen.Emit(OpCodes.Br, exitLabel);
+            Label exitLabel = rgen.DefineLabel();
+            rgen.Emit(OpCodes.Br, exitLabel);
 
-            gen.MarkLabel(Node.returnSwitch);
+            rgen.MarkLabel(Node.returnSwitch);
 
-            gen.Emit(OpCodes.Call, popMethod);
-            gen.Emit(OpCodes.Switch, Node.returnLabels.ToArray());
+            rgen.Emit(OpCodes.Call, popMethod);
+            rgen.Emit(OpCodes.Switch, Node.returnLabels.ToArray());
 
-            gen.MarkLabel(exitLabel);
+            rgen.MarkLabel(exitLabel);
             #endregion
 
             // Emit catch
-            gen.BeginCatchBlock(typeof(Exception));
+            rgen.BeginCatchBlock(typeof(Exception));
             MethodInfo getMessageMethod = typeof(Exception).GetMethod("get_Message");
-            gen.Emit(OpCodes.Call, getMessageMethod);
+            rgen.Emit(OpCodes.Call, getMessageMethod);
             MethodInfo writeLineMethod = typeof(Console).GetMethod("WriteLine", new Type[] { typeof(string) });
-            gen.Emit(OpCodes.Call, writeLineMethod);
-            gen.EndExceptionBlock();
+            rgen.Emit(OpCodes.Call, writeLineMethod);
+            rgen.EndExceptionBlock();
 
-            gen.MarkSequencePoint(Node.writer, Int32.MaxValue, -1, Int32.MaxValue, -1);
-            gen.Emit(OpCodes.Ret);
+            rgen.MarkSequencePoint(Node.writer, Int32.MaxValue, -1, Int32.MaxValue, -1);
+            rgen.Emit(OpCodes.Ret);
 
-
+            #endregion Run Method
 
 
             Type program = typeBuilder.CreateType();

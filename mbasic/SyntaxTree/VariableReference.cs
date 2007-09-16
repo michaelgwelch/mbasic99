@@ -39,7 +39,7 @@ namespace mbasic.SyntaxTree
 
         public override void Emit(ILGenerator gen)
         {
-            location.EmitLoad(gen, locals);
+            location.EmitLoad(gen, fields);
             //if (index < 255)
             //{
             //    switch (index)
