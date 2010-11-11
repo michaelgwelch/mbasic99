@@ -15,6 +15,7 @@ SyntaxTree/BasicType.cs
 SyntaxTree/BinaryOperator.cs
 SyntaxTree/Block.cs
 SyntaxTree/BuiltInsMethodCall.cs
+SyntaxTree/CompilerException.cs
 SyntaxTree/Concatenate.cs
 SyntaxTree/Data.cs
 SyntaxTree/Division.cs
@@ -33,6 +34,7 @@ SyntaxTree/Multiply.cs
 SyntaxTree/Negative.cs
 SyntaxTree/Node.cs
 SyntaxTree/NumberLiteral.cs
+SyntaxTree/OnGoto.cs
 SyntaxTree/OptionBaseStatement.cs
 SyntaxTree/Power.cs
 SyntaxTree/Print.cs
@@ -47,4 +49,5 @@ SyntaxTree/StringLiteral.cs
 SyntaxTree/Subroutine.cs
 SyntaxTree/Subtract.cs
 SyntaxTree/Tab.cs
+SyntaxTree/TypeCheckException.cs
 SyntaxTree/VariableReference.cs
