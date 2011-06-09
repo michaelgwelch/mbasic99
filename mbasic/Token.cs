@@ -76,6 +76,7 @@ internal enum Token
     Then,
     To,
     Variable,
-    Hchar
+    Hchar,
+    Vchar
 
 }
