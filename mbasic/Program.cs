@@ -249,6 +249,7 @@ namespace mbasic
             symbols.ReserveWord("TAB", Token.Tab);
             symbols.ReserveWord("THEN", Token.Then);
             symbols.ReserveWord("TO", Token.To);
+            symbols.ReserveWord("HCHAR", Token.Hchar);
 
             // String Functions
             symbols.ReserveWord("ASC", Token.Function);

@@ -75,6 +75,7 @@ internal enum Token
     Tab,
     Then,
     To,
-    Variable
+    Variable,
+    Hchar
 
 }
