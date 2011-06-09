@@ -77,6 +77,7 @@ internal enum Token
     To,
     Variable,
     Hchar,
-    Vchar
+    Vchar,
+    Sound
 
 }
