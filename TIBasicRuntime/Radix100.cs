@@ -49,7 +49,6 @@ namespace TIBasicRuntime
         public Radix100(uint d)
         {
             // Let's retrieve the mantissa, exponent and sign in terms of Radix 100.
-            int sign = Math.Sign(d);
             sbyte exponent = (sbyte)Math.Floor(Math.Log(Math.Abs(d), 100));
             double mantissa = Math.Abs(d / Math.Pow(100, exponent));
 
