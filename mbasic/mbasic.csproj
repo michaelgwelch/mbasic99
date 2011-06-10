@@ -150,9 +150,6 @@
     <None Include="..\samples\secretnum.mbas">
       <Link>samples\secretnum.mbas</Link>
     </None>
-    <None Include="..\samples\simple.mbas">
-      <Link>samples\simple.mbas</Link>
-    </None>
     <None Include="..\samples\testPrint.mbas">
       <Link>samples\testPrint.mbas</Link>
     </None>
