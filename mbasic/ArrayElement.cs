@@ -4,7 +4,7 @@ using System.Text;
 using System.Reflection.Emit;
 using mbasic.SyntaxTree;
 using System.Reflection;
-using TiBasicRuntime;
+using TIBasicRuntime;
 namespace mbasic
 {
     class ArrayElement : Location

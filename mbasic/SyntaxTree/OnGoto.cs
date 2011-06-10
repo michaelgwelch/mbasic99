@@ -23,7 +23,7 @@ namespace mbasic.SyntaxTree
     using System;
     using System.Collections.Generic;
     using System.Reflection.Emit;
-    using TiBasicRuntime;
+    using TIBasicRuntime;
 
     class OnGoto : Statement
     {

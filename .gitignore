@@ -1,0 +1,6 @@
+bin/
+*.dll
+*.pidb
+*.userprefs
+*.exe
+*.mdb
