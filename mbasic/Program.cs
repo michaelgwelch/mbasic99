@@ -32,7 +32,7 @@ using System.Diagnostics;
 namespace mbasic
 {
     using LabelList = System.Collections.Generic.SortedList<string, Label>;
-    using TiBasicRuntime;
+    using TIBasicRuntime;
 
     class Program
     {

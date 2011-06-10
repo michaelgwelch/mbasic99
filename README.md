@@ -9,7 +9,7 @@ Simple programs that do not use any of the graphic or sound subroutines can be
 parsed and compiled.
 
 Completed
-=========
+---------
 * LET (assignment) statements
 * REM comments
 * END/STOP
@@ -35,7 +35,8 @@ Completed
 * Numeric Constants (including Scientific Notation)
 * String Constants
 
-# Not Implemented
+Not Implemented
+---------------
 * File I/O (OPEN, INPUT, PRINT, CLOSE, EOF, RESTORE)
 * Option Base
 * CALL COLOR
