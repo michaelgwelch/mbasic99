@@ -1,4 +1,4 @@
-﻿99 x = 1
+99 x = 1
 100 For i = 1 to 10 Step 2
 110 if Int((i+x)/2) <> (i+x)/2 then 130
 120 print i
