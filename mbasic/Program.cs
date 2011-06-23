@@ -230,6 +230,7 @@ namespace mbasic
             symbols.ReserveWord("ELSE", Token.Else);
             symbols.ReserveWord("END", Token.End);
             symbols.ReserveWord("FOR", Token.For);
+            symbols.ReserveWord("STEP", Token.Step);
             symbols.ReserveWord("GO", Token.Go);
             symbols.ReserveWord("GOSUB", Token.Gosub);
             symbols.ReserveWord("GOTO", Token.Goto);

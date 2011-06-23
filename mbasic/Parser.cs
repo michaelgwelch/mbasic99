@@ -736,6 +736,14 @@ namespace mbasic
 
             Expression endVal = Expression(); // this is the ending value
 
+            Expression stepVal = new NumberLiteral(1.0, lexer.LineId);
+            if (lookahead == Token.Step)
+            {
+                Match(Token.Step);
+                stepVal = Expression();
+            }
+            
+
             Match(Token.EndOfLine);
 
             Block block = Block(Token.Next);
@@ -746,7 +754,7 @@ namespace mbasic
 
             Assign init = new Assign(location, startVal, line);
             Assign update = new Assign(location, new Add(new LocationReference(location, endLine),
-                new NumberLiteral(1, endLine), endLine), endLine);
+                stepVal, endLine), endLine);
             Expression comparison = RelationalExpression.CompareLessThanEquals(new LocationReference(location, line), endVal, line);
             return new For(init, comparison, update, block, line);
         }

@@ -71,6 +71,7 @@ internal enum Token
     Return,
     String,
     Sub,        // The key word "SUB"
+    Step,
     Subroutine, // A built in subroutine like clear, or print.
     Tab,
     Then,
