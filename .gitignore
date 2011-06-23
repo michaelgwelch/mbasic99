@@ -5,3 +5,5 @@ obj/
 *.userprefs
 *.exe
 *.mdb
+*.suo
+*.ReSharper.user
