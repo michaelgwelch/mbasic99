@@ -1,16 +1,18 @@
 using System;
+using System.Diagnostics;
 using System.IO;
 
-namespace Tests
+namespace mbasic
 {
-    public abstract class OutputExpectationTest
+    public abstract class OutputExpectationTest : IDisposable
     {
         private readonly OutputExpectationBuilder builder = new OutputExpectationBuilder();
-        private readonly TextWriter writer = new StringWriter();
+        private readonly Process process;
         
         protected OutputExpectationTest()
         {
-            Console.SetOut(writer);
+            process = new Process();
+            process.StartInfo.FileName = "../../../bin/mbasic.exe";
         }
         
         public void AddExpectedLine(string expected)
@@ -20,10 +22,21 @@ namespace Tests
         
         public void AssertMatch()
         {
-            writer.Flush();
-            builder.AssertAll(writer.ToString());
+            builder.AssertAll(process.StandardOutput.ReadToEnd());
         }
         
+        public void Run(string path)
+        {
+            process.StartInfo.Arguments = path;
+            process.StartInfo.RedirectStandardOutput = true;
+            process.StartInfo.UseShellExecute = false;
+            process.Start();  
+        }
+        
+        public void Dispose()
+        {
+            process.Dispose();
+        }
         
     }
 }

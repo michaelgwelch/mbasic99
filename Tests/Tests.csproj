@@ -7,7 +7,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{0CE08BCB-D4D2-4DE0-B18B-075184604737}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>Tests</RootNamespace>
+    <RootNamespace>mbasic</RootNamespace>
     <AssemblyName>Tests</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -38,6 +38,7 @@
     <Compile Include="PrintTest.cs" />
     <Compile Include="OutputExpectationBuilder.cs" />
     <Compile Include="OutputExpectationTest.cs" />
+    <Compile Include="ReadTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\mbasic\mbasic.csproj">

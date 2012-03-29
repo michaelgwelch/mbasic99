@@ -4,7 +4,7 @@ using System.Text;
 using System.IO;
 using NUnit.Framework;
 
-namespace Tests
+namespace mbasic
 {
     public class OutputExpectationBuilder
     {

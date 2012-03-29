@@ -2,7 +2,7 @@ using System;
 using mbasic;
 using NUnit.Framework;
 
-namespace Tests
+namespace mbasic
 {
     // Runs print.mbas program and checks its output.
     [TestFixture()]
@@ -80,7 +80,7 @@ namespace Tests
             var printProgram = "../../../samples/print.mbas";
 
             // Act
-            Program.Main(new[] {printProgram});
+            Run(printProgram);
             
             // Assert
             AssertMatch();
