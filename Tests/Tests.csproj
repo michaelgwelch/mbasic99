@@ -39,6 +39,7 @@
     <Compile Include="OutputExpectationBuilder.cs" />
     <Compile Include="OutputExpectationTest.cs" />
     <Compile Include="ReadTest.cs" />
+    <Compile Include="GosubTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\mbasic\mbasic.csproj">
