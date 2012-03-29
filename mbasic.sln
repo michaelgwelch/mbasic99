@@ -5,12 +5,21 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mbasic", "mbasic\mbasic.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TiBasicRuntime", "TiBasicRuntime\TiBasicRuntime.csproj", "{3EF3FB61-5A24-4268-90EC-8FF9101CEF7D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{0CE08BCB-D4D2-4DE0-B18B-075184604737}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
+		Default|Any CPU = Default|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0CE08BCB-D4D2-4DE0-B18B-075184604737}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0CE08BCB-D4D2-4DE0-B18B-075184604737}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0CE08BCB-D4D2-4DE0-B18B-075184604737}.Default|Any CPU.ActiveCfg = Debug|Any CPU
+		{0CE08BCB-D4D2-4DE0-B18B-075184604737}.Default|Any CPU.Build.0 = Debug|Any CPU
+		{0CE08BCB-D4D2-4DE0-B18B-075184604737}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0CE08BCB-D4D2-4DE0-B18B-075184604737}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3CA4DBDE-9A36-4275-AF39-A6EEFFB5589D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3CA4DBDE-9A36-4275-AF39-A6EEFFB5589D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3CA4DBDE-9A36-4275-AF39-A6EEFFB5589D}.Release|Any CPU.ActiveCfg = Release|Any CPU

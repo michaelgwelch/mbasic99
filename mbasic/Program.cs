@@ -34,12 +34,12 @@ namespace mbasic
     using LabelList = System.Collections.Generic.SortedList<string, Label>;
     using TIBasicRuntime;
 
-    class Program
+    public class Program
     {
         static readonly MethodInfo popMethod =
             typeof(BuiltIns).GetMethod("PopReturnAddress");
 
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             bool debug = true;
             bool runit = true;
