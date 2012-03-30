@@ -14,7 +14,7 @@ namespace mbasic
         [Test()]
         public override void Invoke()
         {
-            Invoke();
+            base.Invoke();
         }
     }
 }

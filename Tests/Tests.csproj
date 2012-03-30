@@ -43,6 +43,7 @@
     <Compile Include="GotoTest.cs" />
     <Compile Include="DataTest.cs" />
     <Compile Include="ArrayTest.cs" />
+    <Compile Include="Array2Test.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\mbasic\mbasic.csproj">
