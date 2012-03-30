@@ -22,6 +22,7 @@ namespace mbasic
             AddExpectedLine(" 6  12  18  24  30  36  42 ");
             AddExpectedLine(" 9  18  27  36  45  54  63 ");
             AddExpectedLine(" 12  24  36  48  60  72  84 ");
+            AddExpectedLine("");
 
 
         }
@@ -30,7 +31,7 @@ namespace mbasic
         public void Invoke()
         {
             // Arrange
-            var program = "../../../gosub.mbas";
+            var program = "../../../samples/gosub.mbas";
             
             // Act
             Run(program);
