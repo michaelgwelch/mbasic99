@@ -8,11 +8,13 @@ namespace mbasic
     {
         private readonly OutputExpectationBuilder builder = new OutputExpectationBuilder();
         private readonly Process process;
+        private readonly string path;
         
-        protected OutputExpectationTest()
+        protected OutputExpectationTest(string path)
         {
             process = new Process();
             process.StartInfo.FileName = "../../../bin/mbasic.exe";
+            this.path = path;
         }
         
         public void AddExpectedLine(string expected)
@@ -36,6 +38,17 @@ namespace mbasic
         public void Dispose()
         {
             process.Dispose();
+        }
+        
+        public virtual void Invoke()
+        {
+            // Arrange
+            
+            // Act
+            Run(path);
+            
+            // Assert
+            AssertMatch();
         }
         
     }

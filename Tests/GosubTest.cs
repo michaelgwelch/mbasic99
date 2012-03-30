@@ -6,7 +6,7 @@ namespace mbasic
     [TestFixture()]
 	public class GosubTest : OutputExpectationTest
     {
-        public GosubTest()
+        public GosubTest() : base("../../../samples/gosub.mbas")
         {
             AddExpectedLine("FIRST ARRAY");
             AddExpectedLine("");
@@ -28,17 +28,9 @@ namespace mbasic
         }
         
         [Test()]
-        public void Invoke()
+        public override void Invoke()
         {
-            // Arrange
-            var program = "../../../samples/gosub.mbas";
-            
-            // Act
-            Run(program);
-            
-            // Assert
-            AssertMatch();
-                   
+            base.Invoke();                   
         }
     }
 }

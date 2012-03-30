@@ -8,7 +8,7 @@ namespace mbasic
     [TestFixture()]
 	public class PrintTest : OutputExpectationTest
     {
-        public PrintTest() : base()
+        public PrintTest() : base("../../../samples/print.mbas")
         {
             // Scenarios from II-65
             AddExpectedLine(" 10  20 ");
@@ -74,17 +74,9 @@ namespace mbasic
         }
         
         [Test()]
-        public void Invoke()
+        public override void Invoke()
         {
-            // Arrange
-            var printProgram = "../../../samples/print.mbas";
-
-            // Act
-            Run(printProgram);
-            
-            // Assert
-            AssertMatch();
-            
+            base.Invoke();   
         }
     }
     

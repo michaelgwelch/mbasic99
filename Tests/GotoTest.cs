@@ -6,23 +6,15 @@ namespace mbasic
     [TestFixture()]
 	public class GotoTest : OutputExpectationTest
     {
-        public GotoTest()
+        public GotoTest() : base("../../../samples/goto.mbas")
         {
             AddExpectedLine("Total number of gifts is 78 ");
         }
         
         [Test()]
-        public void Invoke()
+        public override void Invoke()
         {
-            // Arrange
-            var program = "../../../samples/goto.mbas";
-            
-            // Act
-            Run(program);
-            
-            // Assert
-            AssertMatch();
-                
+            Invoke();
         }
     }
 }

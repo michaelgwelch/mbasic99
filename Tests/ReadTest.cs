@@ -6,7 +6,7 @@ namespace mbasic
     [TestFixture]
     public class ReadTest : OutputExpectationTest
     {
-        public ReadTest() : base()
+        public ReadTest() : base("../../../samples/read.mbas")
         {
             AddExpectedLine(" 22  15 ");
             AddExpectedLine(" 36  52 ");
@@ -18,16 +18,9 @@ namespace mbasic
         }
         
         [Test]
-        public void Invoke()
+        public override void Invoke()
         {
-            // Arrange
-            var program = "../../../samples/read.mbas";
-            
-            // Act
-            Run(program);
-            
-            // Assert
-            AssertMatch();
+            base.Invoke();
         }
     }
 }

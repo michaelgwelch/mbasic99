@@ -6,7 +6,7 @@ namespace mbasic
     [TestFixture()]
 	public class DataTest : OutputExpectationTest
     {
-        public DataTest()
+        public DataTest() : base("../../../samples/data.mbas")
         {
             AddExpectedLine(" 2  4 ");
             AddExpectedLine(" 6  7 ");
@@ -27,16 +27,9 @@ namespace mbasic
             AddExpectedLine("D IS  5 .");
         }
         [Test()]
-        public void Invoke()
+        public override void Invoke()
         {
-            // Arrange
-            var program = "../../../samples/data.mbas";
-            
-            // Act
-            Run(program);
-            
-            // Assert
-            AssertMatch();
+            base.Invoke();
         }
     }
 }
