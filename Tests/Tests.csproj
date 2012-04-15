@@ -44,6 +44,9 @@
     <Compile Include="DataTest.cs" />
     <Compile Include="ArrayTest.cs" />
     <Compile Include="Array2Test.cs" />
+    <Compile Include="CheckParensTest.cs" />
+    <Compile Include="DeterministicProgramRunner.cs" />
+    <Compile Include="SecretTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\mbasic\mbasic.csproj">
