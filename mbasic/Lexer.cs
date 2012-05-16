@@ -30,7 +30,7 @@ namespace mbasic
 {
     internal class Lexer
     {
-        Reader reader;
+        StreamEnumerator reader;
         SymbolTable symbols;
 
         string value;
@@ -42,17 +42,30 @@ namespace mbasic
         public Lexer(Stream stream, SymbolTable symbols)
         {
             this.symbols = symbols;
-            reader = new Reader(stream);
+            reader = new StreamEnumerator(stream);
             startOfLine = true;
         }
 
+        /// <summary>
+        /// If the current token is a symbol, then this returns the internal index value
+        /// of that symbol in the internal symbol table. 
+        /// </summary>
+        /// <value>
+        /// The index of the symbol.
+        /// </value>
         public int SymbolIndex { get { return index; } }
 
+        /// <summary>
+        /// The actual string value of the current token.
+        /// </summary>
         public string Value { get { return value; } }
 
+        /// <summary>
+        /// If the current token is a number this returns the 
+        /// numeric value of the current token.
+        /// </summary>
         public double NumericValue { get { return double.Parse(value); } }
 
-        //public string Label { get { return label; } }
 
         public Token Next()
         {
@@ -314,58 +327,6 @@ namespace mbasic
         //public int LineNumber { get { return reader.LineNumber; } }
         public int Column { get { return reader.Column; } }
 
-        private class Reader
-        {
-            int lineNumber=1;
-            int column=1;
 
-            StreamReader reader;
-            public Reader(Stream stream)
-            {
-                reader = new StreamReader(stream);
-            }
-
-            /// <summary>
-            /// Gets the character at the current position but does not change the current position.
-            /// </summary>
-            /// <returns></returns>
-            public char Current
-            {
-                get
-                {
-                    return (char)reader.Peek();
-                }
-            }
-
-            /// <summary>
-            /// Moves the reader to the next character.
-            /// </summary>
-            public void Advance()
-            {
-                int val = reader.Read();
-                if (val == '\n')
-                {
-                    column = 1;
-                    lineNumber++;
-                }
-                else column++;
-            }
-
-            /// <summary>
-            /// Moves the reader to the next character and returns it.
-            /// Identical to Advance() followed by reading Current;
-            /// </summary>
-            /// <returns></returns>
-            public char Read()
-            {
-                Advance();
-                return Current;
-            }
-
-            public bool EndOfStream { get { return reader.EndOfStream; } }
-
-            public int LineNumber { get { return lineNumber; } }
-            public int Column { get { return column; } }
-        }
     }
 }

@@ -98,6 +98,7 @@
     <Compile Include="Token.cs" />
     <Compile Include="Variable.cs" />
     <Compile Include="VariableLocation.cs" />
+    <Compile Include="StreamEnumerator.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TiBasicRuntime\TiBasicRuntime.csproj">
