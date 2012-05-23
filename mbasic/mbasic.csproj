@@ -99,6 +99,7 @@
     <Compile Include="Variable.cs" />
     <Compile Include="VariableLocation.cs" />
     <Compile Include="StreamEnumerator.cs" />
+    <Compile Include="SimpleLexer.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TiBasicRuntime\TiBasicRuntime.csproj">
