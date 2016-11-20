@@ -725,7 +725,8 @@ namespace mbasic
         {
             LineId line = lexer.LineId; // This is the line that the FOR key word is used on
             Match(Token.For);
-
+			
+			//TODO: Must make sure that we only use variable (not array expression) in For Loop
             Location location = Location(); // this is the counting variable
 
             Match(Token.Equals);
